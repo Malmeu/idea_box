@@ -1,0 +1,94 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { AnonymousForm } from '../features/SafeSpace/AnonymousForm';
+import { MessageCard } from '../features/SafeSpace/MessageCard';
+
+interface Message {
+    id: string;
+    content: string;
+    timestamp: string;
+    color: string;
+}
+
+const PASTEL_COLORS = [
+    'bg-pastel-blue/40',
+    'bg-pastel-pink/40',
+    'bg-pastel-green/40',
+    'bg-pastel-lavender/40',
+    'bg-pastel-cream/60',
+    'bg-pastel-mint/40',
+    'bg-pastel-peach/40',
+];
+
+export const SafeSpacePage: React.FC = () => {
+    const [messages, setMessages] = useState<Message[]>([]);
+
+    useEffect(() => {
+        fetchMessages();
+    }, []);
+
+    const fetchMessages = async () => {
+        try {
+            const response = await fetch('http://localhost:3000/api/messages');
+            const data = await response.json();
+            setMessages(data);
+        } catch (error) {
+            console.error('Erreur chargement messages', error);
+        }
+    };
+
+    const handleAddMessage = async (content: string) => {
+        const randomColor = PASTEL_COLORS[Math.floor(Math.random() * PASTEL_COLORS.length)];
+        try {
+            const response = await fetch('http://localhost:3000/api/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content, color: randomColor }),
+            });
+            const newMessage = await response.json();
+            setMessages([newMessage, ...messages]);
+        } catch (error) {
+            console.error('Erreur ajout message', error);
+        }
+    };
+
+    return (
+        <div className="space-y-8 pb-12">
+            <header className="text-center mb-12">
+                <motion.h1
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-4xl font-bold text-slate-800 mb-4"
+                >
+                    Safe Space
+                </motion.h1>
+                <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-slate-600 text-lg max-w-2xl mx-auto"
+                >
+                    Un espace bienveillant pour vous exprimer librement et anonymement.
+                    Ici, votre voix compte, sans jugement.
+                </motion.p>
+            </header>
+
+            <div className="max-w-2xl mx-auto mb-16">
+                <AnonymousForm onSubmit={handleAddMessage} />
+            </div>
+
+            <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+                <AnimatePresence mode="popLayout">
+                    {messages.map((message) => (
+                        <MessageCard
+                            key={message.id}
+                            message={message.content}
+                            color={message.color}
+                            timestamp={new Date(message.timestamp)}
+                        />
+                    ))}
+                </AnimatePresence>
+            </div>
+        </div>
+    );
+};
