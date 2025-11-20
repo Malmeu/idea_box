@@ -107,7 +107,6 @@ export const SafeSpacePage: React.FC = () => {
                             title={message.title}
                             category={message.category}
                             mood={message.mood}
-                            isAdvanced={message.isAdvanced}
                         />
                     ))}
                 </AnimatePresence>
