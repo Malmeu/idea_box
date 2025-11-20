@@ -57,11 +57,22 @@ export const DashboardPage: React.FC = () => {
         const token = localStorage.getItem('token');
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         try {
-            await fetch(`${apiUrl}/api/ideas/${id}`, {
+            const response = await fetch(`${apiUrl}/api/ideas/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            fetchStats();
+
+            if (response.status === 403 || response.status === 401) {
+                alert('Votre session a expiré. Veuillez vous reconnecter.');
+                localStorage.removeItem('token');
+                localStorage.removeItem('role');
+                navigate('/login');
+                return;
+            }
+
+            if (response.ok) {
+                fetchStats();
+            }
         } catch (error) {
             console.error('Erreur suppression', error);
         }
@@ -72,11 +83,22 @@ export const DashboardPage: React.FC = () => {
         const token = localStorage.getItem('token');
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         try {
-            await fetch(`${apiUrl}/api/messages/${id}`, {
+            const response = await fetch(`${apiUrl}/api/messages/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            fetchStats();
+
+            if (response.status === 403 || response.status === 401) {
+                alert('Votre session a expiré. Veuillez vous reconnecter.');
+                localStorage.removeItem('token');
+                localStorage.removeItem('role');
+                navigate('/login');
+                return;
+            }
+
+            if (response.ok) {
+                fetchStats();
+            }
         } catch (error) {
             console.error('Erreur suppression', error);
         }
