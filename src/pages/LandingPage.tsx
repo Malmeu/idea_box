@@ -126,19 +126,32 @@ export const LandingPage: React.FC = () => {
                 >
                     <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/10 backdrop-blur-2xl rounded-[3rem] border border-white/50 shadow-2xl p-8 transform rotate-[-6deg] hover:rotate-0 transition-all duration-700">
                         <div className="h-full w-full bg-slate-50/50 rounded-[2rem] overflow-hidden relative">
-                            {/* Abstract UI Elements representation */}
-                            <div className="absolute top-8 left-8 right-8 h-32 bg-white rounded-2xl shadow-sm p-4 flex gap-4 items-center animate-pulse">
-                                <div className="w-16 h-16 bg-pastel-blue/20 rounded-xl" />
-                                <div className="flex-1 space-y-3">
-                                    <div className="h-4 bg-slate-100 rounded-full w-3/4" />
-                                    <div className="h-3 bg-slate-100 rounded-full w-1/2" />
+                            {/* Example Idea Card */}
+                            <div className="absolute top-8 left-8 right-8 bg-white rounded-2xl shadow-sm p-4 flex gap-4 items-start animate-[float_6s_ease-in-out_infinite]">
+                                <div className="w-12 h-12 bg-pastel-blue/20 rounded-xl flex items-center justify-center flex-shrink-0 text-pastel-blue">
+                                    <Lightbulb className="w-6 h-6" />
+                                </div>
+                                <div className="flex-1">
+                                    <div className="h-4 w-3/4 bg-slate-100 rounded mb-2" />
+                                    <p className="text-sm text-slate-600 font-medium">"Organiser un hackathon interne pour innover ensemble !"</p>
+                                    <div className="flex gap-3 mt-2">
+                                        <span className="text-xs text-pastel-blue bg-pastel-blue/10 px-2 py-1 rounded-full">💡 Innovation</span>
+                                        <span className="text-xs text-slate-400 flex items-center gap-1">❤️ 12</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="absolute top-48 left-8 right-8 h-32 bg-white rounded-2xl shadow-sm p-4 flex gap-4 items-center animate-pulse delay-150">
-                                <div className="w-16 h-16 bg-pastel-lavender/20 rounded-xl" />
-                                <div className="flex-1 space-y-3">
-                                    <div className="h-4 bg-slate-100 rounded-full w-2/3" />
-                                    <div className="h-3 bg-slate-100 rounded-full w-1/2" />
+
+                            {/* Example Safe Space Message */}
+                            <div className="absolute top-48 left-12 right-4 bg-white rounded-2xl shadow-sm p-4 flex gap-4 items-start animate-[float_7s_ease-in-out_infinite_1s]">
+                                <div className="w-12 h-12 bg-pastel-lavender/20 rounded-xl flex items-center justify-center flex-shrink-0 text-pastel-lavender">
+                                    <Shield className="w-6 h-6" />
+                                </div>
+                                <div className="flex-1">
+                                    <div className="h-4 w-1/2 bg-slate-100 rounded mb-2" />
+                                    <p className="text-sm text-slate-600 font-medium italic">"Merci pour l'écoute bienveillante lors de la réunion d'hier..."</p>
+                                    <div className="flex gap-3 mt-2">
+                                        <span className="text-xs text-pastel-lavender bg-pastel-lavender/10 px-2 py-1 rounded-full">🛡️ Anonyme</span>
+                                    </div>
                                 </div>
                             </div>
                             {/* Floating elements */}
