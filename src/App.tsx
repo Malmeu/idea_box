@@ -19,7 +19,11 @@ function App() {
               <Routes>
                 <Route path="/" element={<IdeaBoxPage />} />
                 <Route path="/safe-space" element={<SafeSpacePage />} />
-                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/dashboard" element={
+                  <ProtectedRoute requireAdmin>
+                    <DashboardPage />
+                  </ProtectedRoute>
+                } />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Layout>

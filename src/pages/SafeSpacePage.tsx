@@ -6,7 +6,7 @@ import { MessageCard } from '../features/SafeSpace/MessageCard';
 interface Message {
     id: string;
     content: string;
-    timestamp: string;
+    createdAt: string;
     color: string;
 }
 
@@ -77,14 +77,14 @@ export const SafeSpacePage: React.FC = () => {
                 <AnonymousForm onSubmit={handleAddMessage} />
             </div>
 
-            <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+            <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
                 <AnimatePresence mode="popLayout">
                     {messages.map((message) => (
                         <MessageCard
                             key={message.id}
                             message={message.content}
                             color={message.color}
-                            timestamp={new Date(message.timestamp)}
+                            date={message.createdAt}
                         />
                     ))}
                 </AnimatePresence>

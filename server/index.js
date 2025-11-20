@@ -36,8 +36,12 @@ app.post('/api/auth/login', async (req, res) => {
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) return res.status(400).json({ error: "Mot de passe incorrect" });
 
-    const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET);
-    res.json({ token });
+    const token = jwt.sign(
+        { userId: user.id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: '24h' }
+    );
+    res.json({ token, role: user.role });
 });
 
 // Ideas Routes

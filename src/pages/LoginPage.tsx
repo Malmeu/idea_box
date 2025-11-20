@@ -26,7 +26,13 @@ export const LoginPage: React.FC = () => {
 
             if (response.ok) {
                 localStorage.setItem('token', data.token);
-                navigate('/');
+                localStorage.setItem('role', data.role);
+
+                if (data.role === 'ADMIN') {
+                    navigate('/dashboard');
+                } else {
+                    navigate('/');
+                }
             } else {
                 setError(data.error || 'Identifiants incorrects');
             }

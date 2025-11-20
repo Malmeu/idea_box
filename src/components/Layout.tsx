@@ -47,17 +47,19 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                         </div>
                     </Link>
 
-                    <Link to="/dashboard" className="relative group">
-                        <div className={clsx(
-                            "p-3 md:p-4 rounded-2xl transition-all duration-300 flex items-center gap-3",
-                            location.pathname === '/dashboard' ? "bg-white shadow-lg scale-105" : "bg-white/50 hover:bg-white/80"
-                        )}>
-                            <LayoutDashboard className={clsx("w-5 h-5 md:w-6 md:h-6", location.pathname === '/dashboard' ? "text-slate-800" : "text-gray-400")} />
-                            <span className={clsx("font-medium text-sm md:text-base", location.pathname === '/dashboard' ? "text-gray-800" : "text-gray-500")}>
-                                Admin
-                            </span>
-                        </div>
-                    </Link>
+                    {localStorage.getItem('role') === 'ADMIN' && (
+                        <Link to="/dashboard" className="relative group">
+                            <div className={clsx(
+                                "p-3 md:p-4 rounded-2xl transition-all duration-300 flex items-center gap-3",
+                                location.pathname === '/dashboard' ? "bg-white shadow-lg scale-105" : "bg-white/50 hover:bg-white/80"
+                            )}>
+                                <LayoutDashboard className={clsx("w-5 h-5 md:w-6 md:h-6", location.pathname === '/dashboard' ? "text-slate-800" : "text-gray-400")} />
+                                <span className={clsx("font-medium text-sm md:text-base", location.pathname === '/dashboard' ? "text-gray-800" : "text-gray-500")}>
+                                    Admin
+                                </span>
+                            </div>
+                        </Link>
+                    )}
                 </div>
             </nav>
 
