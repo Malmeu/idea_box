@@ -151,7 +151,7 @@ export const DashboardPage: React.FC = () => {
                                 <div className="flex justify-between items-start gap-4">
                                     <p className="text-slate-700 font-medium font-handwriting">{message.content}</p>
                                     <button
-                                        onClick={() => handleDelete('messages', message.id)}
+                                        onClick={() => handleDeleteMessage(message.id)}
                                         className="text-slate-500/50 hover:text-red-500 p-2 hover:bg-white/50 rounded-lg transition-colors"
                                     >
                                         <Trash2 className="w-4 h-4" />
