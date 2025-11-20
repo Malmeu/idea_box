@@ -46,7 +46,7 @@ export const MessageCard: React.FC<MessageCardProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className={clsx(
-                "rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 break-words break-inside-avoid mb-6",
+                "rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 wrap-break-word break-inside-avoid mb-6",
                 color
             )}
         >
@@ -74,7 +74,7 @@ export const MessageCard: React.FC<MessageCardProps> = ({
             )}
 
             {/* Message principal */}
-            <p className="text-slate-700 font-medium leading-relaxed font-handwriting">
+            <p className="text-slate-700 font-medium leading-relaxed font-handwriting wrap-break-word">
                 "{message}"
             </p>
 

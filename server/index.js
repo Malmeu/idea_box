@@ -4,6 +4,7 @@ const { PrismaClient } = require('@prisma/client');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { validateContent, anonymizeMetadata } = require('./utils/contentModeration');
 
 const prisma = new PrismaClient();
 const app = express();
@@ -99,10 +100,22 @@ app.post('/api/ideas', async (req, res) => {
     const { title, description, category, priority, tags, isAdvanced } = req.body;
     if (!title || !description) return res.status(400).json({ error: "Titre et description requis" });
 
+    // Validation du titre
+    const titleValidation = validateContent(title, { maxLength: 100, minLength: 3 });
+    if (!titleValidation.isValid) {
+        return res.status(400).json({ error: titleValidation.message });
+    }
+
+    // Validation de la description
+    const descriptionValidation = validateContent(description, { maxLength: 500, minLength: 10 });
+    if (!descriptionValidation.isValid) {
+        return res.status(400).json({ error: descriptionValidation.message });
+    }
+
     const idea = await prisma.idea.create({
         data: { 
-            title, 
-            description,
+            title: titleValidation.cleanedContent, 
+            description: descriptionValidation.cleanedContent,
             category: category || null,
             priority: priority || null,
             tags: tags || null,
@@ -199,17 +212,47 @@ app.post('/api/messages', async (req, res) => {
     const { content, color, title, category, mood, isAdvanced } = req.body;
     if (!content) return res.status(400).json({ error: "Contenu requis" });
 
+    // Anonymisation des métadonnées (ne stocke aucune info identifiable)
+    anonymizeMetadata(req);
+
+    // Validation du contenu principal
+    const contentValidation = validateContent(content, { maxLength: 500, minLength: 1 });
+    if (!contentValidation.isValid) {
+        return res.status(400).json({ error: contentValidation.message });
+    }
+
+    // Validation du titre si présent
+    let validatedTitle = title;
+    if (title) {
+        const titleValidation = validateContent(title, { maxLength: 100, minLength: 1 });
+        if (!titleValidation.isValid) {
+            return res.status(400).json({ error: `Titre: ${titleValidation.message}` });
+        }
+        validatedTitle = titleValidation.cleanedContent;
+    }
+
     const message = await prisma.message.create({
         data: {
-            content,
+            content: contentValidation.cleanedContent,
             color: color || 'bg-pastel-blue/40',
-            title: title || null,
+            title: validatedTitle || null,
             category: category || null,
             mood: mood || null,
             isAdvanced: isAdvanced || false
         }
     });
-    res.json({ ...message, id: message.id.toString() });
+    
+    // Ne retourner que les données nécessaires, sans métadonnées
+    res.json({ 
+        id: message.id.toString(),
+        content: message.content,
+        color: message.color,
+        title: message.title,
+        category: message.category,
+        mood: message.mood,
+        isAdvanced: message.isAdvanced,
+        createdAt: message.createdAt
+    });
 });
 
 // Admin Routes (Protected)

@@ -71,10 +71,19 @@ export const IdeaBoxPage: React.FC = () => {
                     isAdvanced: data.isAdvanced
                 }),
             });
-            const newIdea = await response.json();
-            setIdeas([newIdea, ...ideas]);
+            
+            const result = await response.json();
+            
+            if (!response.ok) {
+                // Afficher l'erreur de validation
+                alert(result.error || 'Erreur lors de l\'ajout de l\'idée');
+                return;
+            }
+            
+            setIdeas([result, ...ideas]);
         } catch (error) {
             console.error('Erreur ajout idée', error);
+            alert('Erreur de connexion au serveur');
         }
     };
 

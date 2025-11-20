@@ -79,7 +79,7 @@ export const LandingPage: React.FC = () => {
                         </div>
                         <h1 className="text-5xl lg:text-7xl font-bold leading-tight tracking-tight text-slate-900">
                             Vos idées façonnent <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pastel-blue to-pastel-lavender">
+                            <span className="text-transparent bg-clip-text bg-linear-to-r from-pastel-blue to-pastel-lavender">
                                 notre futur
                             </span>
                         </h1>
@@ -124,8 +124,8 @@ export const LandingPage: React.FC = () => {
                     transition={{ duration: 0.6, ease: "easeOut" }}
                     className="relative hidden lg:block h-[600px]"
                 >
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/10 backdrop-blur-xl rounded-[3rem] border border-white/50 shadow-xl p-8">
-                        <div className="h-full w-full bg-slate-50/30 rounded-[2rem] overflow-hidden relative">
+                    <div className="absolute inset-0 bg-linear-to-br from-white/40 to-white/10 backdrop-blur-xl rounded-[3rem] border border-white/50 shadow-xl p-8">
+                        <div className="h-full w-full bg-slate-50/30 rounded-4xl overflow-hidden relative">
                             
                             {/* Carte Idée 1 - Style réel */}
                             <motion.div
@@ -283,7 +283,7 @@ export const LandingPage: React.FC = () => {
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="bg-white rounded-[2rem] p-8 md:p-12 shadow-2xl w-full max-w-md relative overflow-hidden"
+                            className="bg-white rounded-4xl p-8 md:p-12 shadow-2xl w-full max-w-md relative overflow-hidden"
                         >
                             <button
                                 onClick={() => setShowLogin(false)}

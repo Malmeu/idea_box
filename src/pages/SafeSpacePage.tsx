@@ -64,10 +64,19 @@ export const SafeSpacePage: React.FC = () => {
                     isAdvanced: data.isAdvanced
                 }),
             });
-            const newMessage = await response.json();
-            setMessages([newMessage, ...messages]);
+            
+            const result = await response.json();
+            
+            if (!response.ok) {
+                // Afficher l'erreur de validation
+                alert(result.error || 'Erreur lors de l\'envoi du message');
+                return;
+            }
+            
+            setMessages([result, ...messages]);
         } catch (error) {
             console.error('Erreur ajout message', error);
+            alert('Erreur de connexion au serveur');
         }
     };
 
