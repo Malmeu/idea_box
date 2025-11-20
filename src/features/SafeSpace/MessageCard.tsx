@@ -12,8 +12,9 @@ export const MessageCard: React.FC<MessageCardProps> = ({ message, color, date }
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className={clsx(
                 "rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 break-words break-inside-avoid mb-6",
                 color
