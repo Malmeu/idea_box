@@ -1,7 +1,7 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Lightbulb, Shield, LayoutDashboard } from 'lucide-react';
+import { Lightbulb, Shield, LayoutDashboard, LogOut } from 'lucide-react';
 import clsx from 'clsx';
 
 interface LayoutProps {
@@ -10,7 +10,14 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
     const location = useLocation();
+    const navigate = useNavigate();
     const isSafeSpace = location.pathname === '/safe-space';
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        navigate('/login');
+    };
 
     return (
         <div className={clsx(
@@ -61,6 +68,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                         </Link>
                     )}
                 </div>
+
+                <button
+                    onClick={handleLogout}
+                    className="p-3 md:p-4 rounded-2xl bg-red-50 hover:bg-red-100 transition-all duration-300 flex items-center gap-2 text-red-600 hover:text-red-700"
+                >
+                    <LogOut className="w-5 h-5" />
+                    <span className="font-medium text-sm md:text-base">Déconnexion</span>
+                </button>
             </nav>
 
             <main className="container mx-auto px-4 py-8 max-w-4xl">
