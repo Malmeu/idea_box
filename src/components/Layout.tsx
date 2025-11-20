@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Lightbulb, Shield } from 'lucide-react';
+import { Lightbulb, Shield, LayoutDashboard } from 'lucide-react';
 import clsx from 'clsx';
 
 interface LayoutProps {
@@ -17,30 +17,48 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             "min-h-screen transition-colors duration-700 ease-in-out font-sans",
             isSafeSpace ? "bg-pastel-lavender/30" : "bg-pastel-blue/30"
         )}>
-            <nav className="p-6 flex justify-center items-center gap-8">
-                <Link to="/" className="relative group">
-                    <div className={clsx(
-                        "p-4 rounded-2xl transition-all duration-300 flex items-center gap-3",
-                        !isSafeSpace ? "bg-white shadow-lg scale-105" : "bg-white/50 hover:bg-white/80"
-                    )}>
-                        <Lightbulb className={clsx("w-6 h-6", !isSafeSpace ? "text-pastel-blue" : "text-gray-400")} />
-                        <span className={clsx("font-medium", !isSafeSpace ? "text-gray-800" : "text-gray-500")}>
-                            Boîte à Idées
-                        </span>
-                    </div>
-                </Link>
+            <nav className="p-6 flex flex-col md:flex-row justify-between items-center max-w-6xl mx-auto gap-6">
+                <div className="flex items-center gap-3">
+                    <img src="/logoCollable11.png" alt="Logo" className="h-12 w-auto drop-shadow-sm" />
+                </div>
 
-                <Link to="/safe-space" className="relative group">
-                    <div className={clsx(
-                        "p-4 rounded-2xl transition-all duration-300 flex items-center gap-3",
-                        isSafeSpace ? "bg-white shadow-lg scale-105" : "bg-white/50 hover:bg-white/80"
-                    )}>
-                        <Shield className={clsx("w-6 h-6", isSafeSpace ? "text-pastel-lavender" : "text-gray-400")} />
-                        <span className={clsx("font-medium", isSafeSpace ? "text-gray-800" : "text-gray-500")}>
-                            Safe Space
-                        </span>
-                    </div>
-                </Link>
+                <div className="flex justify-center items-center gap-4 md:gap-8">
+                    <Link to="/" className="relative group">
+                        <div className={clsx(
+                            "p-3 md:p-4 rounded-2xl transition-all duration-300 flex items-center gap-3",
+                            !isSafeSpace && location.pathname !== '/dashboard' ? "bg-white shadow-lg scale-105" : "bg-white/50 hover:bg-white/80"
+                        )}>
+                            <Lightbulb className={clsx("w-5 h-5 md:w-6 md:h-6", !isSafeSpace && location.pathname !== '/dashboard' ? "text-pastel-blue" : "text-gray-400")} />
+                            <span className={clsx("font-medium text-sm md:text-base", !isSafeSpace && location.pathname !== '/dashboard' ? "text-gray-800" : "text-gray-500")}>
+                                Boîte à Idées
+                            </span>
+                        </div>
+                    </Link>
+
+                    <Link to="/safe-space" className="relative group">
+                        <div className={clsx(
+                            "p-3 md:p-4 rounded-2xl transition-all duration-300 flex items-center gap-3",
+                            isSafeSpace ? "bg-white shadow-lg scale-105" : "bg-white/50 hover:bg-white/80"
+                        )}>
+                            <Shield className={clsx("w-5 h-5 md:w-6 md:h-6", isSafeSpace ? "text-pastel-lavender" : "text-gray-400")} />
+                            <span className={clsx("font-medium text-sm md:text-base", isSafeSpace ? "text-gray-800" : "text-gray-500")}>
+                                Safe Space
+                            </span>
+                        </div>
+                    </Link>
+
+                    <Link to="/dashboard" className="relative group">
+                        <div className={clsx(
+                            "p-3 md:p-4 rounded-2xl transition-all duration-300 flex items-center gap-3",
+                            location.pathname === '/dashboard' ? "bg-white shadow-lg scale-105" : "bg-white/50 hover:bg-white/80"
+                        )}>
+                            <LayoutDashboard className={clsx("w-5 h-5 md:w-6 md:h-6", location.pathname === '/dashboard' ? "text-slate-800" : "text-gray-400")} />
+                            <span className={clsx("font-medium text-sm md:text-base", location.pathname === '/dashboard' ? "text-gray-800" : "text-gray-500")}>
+                                Admin
+                            </span>
+                        </div>
+                    </Link>
+                </div>
             </nav>
 
             <main className="container mx-auto px-4 py-8 max-w-4xl">
