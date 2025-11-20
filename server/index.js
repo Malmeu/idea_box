@@ -21,7 +21,11 @@ const authenticateToken = (req, res, next) => {
 
     jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) return res.sendStatus(403);
-        req.user = user;
+        // Support both new (userId) and old (id) token payloads
+        req.user = {
+            ...user,
+            userId: user.userId || user.id
+        };
         next();
     });
 };
@@ -46,15 +50,39 @@ app.post('/api/auth/login', async (req, res) => {
 
 // Ideas Routes
 app.get('/api/ideas', async (req, res) => {
+    // Get userId from token if available (optional auth for viewing, but needed for "hasLiked")
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    let userId = null;
+
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, JWT_SECRET);
+            userId = decoded.userId;
+        } catch (e) { }
+    }
+
     const ideas = await prisma.idea.findMany({
         orderBy: { createdAt: 'desc' },
-        include: { comments: true } // Include comments count logic if needed, or just raw
+        include: {
+            comments: {
+                include: { user: { select: { username: true } } },
+                orderBy: { createdAt: 'desc' }
+            },
+            userLikes: true
+        }
     });
-    // Transform to match frontend expected format if needed
+
     const formattedIdeas = ideas.map(idea => ({
         ...idea,
         id: idea.id.toString(),
-        comments: idea.comments.length,
+        commentsCount: idea.comments.length,
+        comments: idea.comments.map(c => ({
+            ...c,
+            id: c.id.toString(),
+            username: c.user ? c.user.username : 'Anonyme'
+        })),
+        hasLiked: userId ? idea.userLikes.some(like => like.userId === userId) : false,
         createdAt: idea.createdAt
     }));
     res.json(formattedIdeas);
@@ -67,19 +95,77 @@ app.post('/api/ideas', async (req, res) => {
     const idea = await prisma.idea.create({
         data: { title, description }
     });
-    res.json({ ...idea, id: idea.id.toString(), comments: 0 });
+    res.json({ ...idea, id: idea.id.toString(), comments: [], hasLiked: false });
 });
 
-app.post('/api/ideas/:id/like', async (req, res) => {
+app.post('/api/ideas/:id/like', authenticateToken, async (req, res) => {
     const { id } = req.params;
+    const userId = req.user.userId;
+
     try {
-        const idea = await prisma.idea.update({
-            where: { id: parseInt(id) },
-            data: { likes: { increment: 1 } }
+        const existingLike = await prisma.like.findUnique({
+            where: {
+                userId_ideaId: {
+                    userId: userId,
+                    ideaId: parseInt(id)
+                }
+            }
         });
-        res.json(idea);
+
+        let updatedIdea;
+
+        if (existingLike) {
+            // Unlike
+            await prisma.like.delete({ where: { id: existingLike.id } });
+            updatedIdea = await prisma.idea.update({
+                where: { id: parseInt(id) },
+                data: { likes: { decrement: 1 } }
+            });
+        } else {
+            // Like
+            await prisma.like.create({
+                data: {
+                    userId: userId,
+                    ideaId: parseInt(id)
+                }
+            });
+            updatedIdea = await prisma.idea.update({
+                where: { id: parseInt(id) },
+                data: { likes: { increment: 1 } }
+            });
+        }
+
+        res.json({ ...updatedIdea, hasLiked: !existingLike });
     } catch (e) {
-        res.status(404).json({ error: "Idée non trouvée" });
+        console.error(e);
+        res.status(404).json({ error: "Erreur lors du like" });
+    }
+});
+
+app.post('/api/ideas/:id/comments', authenticateToken, async (req, res) => {
+    const { id } = req.params;
+    const { content } = req.body;
+    const userId = req.user.userId;
+
+    if (!content) return res.status(400).json({ error: "Contenu requis" });
+
+    try {
+        const comment = await prisma.comment.create({
+            data: {
+                content,
+                ideaId: parseInt(id),
+                userId
+            },
+            include: { user: { select: { username: true } } }
+        });
+
+        res.json({
+            ...comment,
+            id: comment.id.toString(),
+            username: comment.user.username
+        });
+    } catch (e) {
+        res.status(500).json({ error: "Erreur lors du commentaire" });
     }
 });
 

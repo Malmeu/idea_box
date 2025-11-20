@@ -3,12 +3,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { IdeaForm } from '../features/IdeaBox/IdeaForm';
 import { IdeaCard } from '../features/IdeaBox/IdeaCard';
 
+interface Comment {
+    id: string;
+    content: string;
+    username: string;
+    createdAt: string;
+}
+
 interface Idea {
     id: string;
     title: string;
     description: string;
     likes: number;
-    comments: number;
+    commentsCount: number;
+    comments: Comment[];
+    hasLiked: boolean;
     createdAt: string;
 }
 
@@ -20,8 +29,11 @@ export const IdeaBoxPage: React.FC = () => {
     }, []);
 
     const fetchIdeas = async () => {
+        const token = localStorage.getItem('token');
         try {
-            const response = await fetch('http://localhost:3000/api/ideas');
+            const response = await fetch('http://localhost:3000/api/ideas', {
+                headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+            });
             const data = await response.json();
             setIdeas(data);
         } catch (error) {
@@ -30,10 +42,14 @@ export const IdeaBoxPage: React.FC = () => {
     };
 
     const handleAddIdea = async (title: string, description: string) => {
+        const token = localStorage.getItem('token');
         try {
             const response = await fetch('http://localhost:3000/api/ideas', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({ title, description }),
             });
             const newIdea = await response.json();
@@ -44,17 +60,51 @@ export const IdeaBoxPage: React.FC = () => {
     };
 
     const handleLike = async (id: string) => {
+        const token = localStorage.getItem('token');
         try {
             const response = await fetch(`http://localhost:3000/api/ideas/${id}/like`, {
-                method: 'POST'
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
+                const updatedIdea = await response.json();
                 setIdeas(ideas.map(idea =>
-                    idea.id === id ? { ...idea, likes: idea.likes + 1 } : idea
+                    idea.id === id ? {
+                        ...idea,
+                        likes: updatedIdea.likes,
+                        hasLiked: updatedIdea.hasLiked
+                    } : idea
                 ));
             }
         } catch (error) {
             console.error('Erreur like', error);
+        }
+    };
+
+    const handleAddComment = async (id: string, content: string) => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`http://localhost:3000/api/ideas/${id}/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ content }),
+            });
+
+            if (response.ok) {
+                const newComment = await response.json();
+                setIdeas(ideas.map(idea =>
+                    idea.id === id ? {
+                        ...idea,
+                        comments: [newComment, ...idea.comments],
+                        commentsCount: idea.commentsCount + 1
+                    } : idea
+                ));
+            }
+        } catch (error) {
+            console.error('Erreur ajout commentaire', error);
         }
     };
 
@@ -90,6 +140,7 @@ export const IdeaBoxPage: React.FC = () => {
                             key={idea.id}
                             {...idea}
                             onLike={handleLike}
+                            onAddComment={handleAddComment}
                         />
                     ))}
                 </AnimatePresence>

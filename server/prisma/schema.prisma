@@ -8,19 +8,22 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  username String @unique
+  id       Int       @id @default(autoincrement())
+  username String    @unique
   password String
-  role     String @default("USER") // "ADMIN" or "USER"
+  role     String    @default("USER")
+  likes    Like[]
+  comments Comment[]
 }
 
 model Idea {
   id          Int       @id @default(autoincrement())
   title       String
   description String
-  likes       Int       @default(0)
+  likes       Int       @default(0) // Garder pour perf ou supprimer et compter les Likes
   createdAt   DateTime  @default(now())
   comments    Comment[]
+  userLikes   Like[]
 }
 
 model Comment {
@@ -29,6 +32,18 @@ model Comment {
   createdAt DateTime @default(now())
   ideaId    Int
   idea      Idea     @relation(fields: [ideaId], references: [id])
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+model Like {
+  id     Int  @id @default(autoincrement())
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+  ideaId Int
+  idea   Idea @relation(fields: [ideaId], references: [id])
+
+  @@unique([userId, ideaId])
 }
 
 model Message {
