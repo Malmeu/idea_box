@@ -9,7 +9,6 @@ interface MessageCardProps {
     title?: string;
     category?: string;
     mood?: string;
-    isAdvanced?: boolean;
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -38,8 +37,7 @@ export const MessageCard: React.FC<MessageCardProps> = ({
     date, 
     title, 
     category, 
-    mood, 
-    isAdvanced 
+    mood
 }) => {
     return (
         <motion.div
@@ -52,8 +50,8 @@ export const MessageCard: React.FC<MessageCardProps> = ({
                 color
             )}
         >
-            {/* En-tête avec catégorie et humeur si mode avancé */}
-            {isAdvanced && (category || mood) && (
+            {/* En-tête avec catégorie et humeur */}
+            {(category || mood) && (
                 <div className="flex items-center gap-2 mb-3 pb-3 border-b border-slate-200/50">
                     {category && (
                         <span className="text-xs bg-white/50 px-2 py-1 rounded-full">

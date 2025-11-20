@@ -96,11 +96,18 @@ app.get('/api/ideas', async (req, res) => {
 });
 
 app.post('/api/ideas', async (req, res) => {
-    const { title, description } = req.body;
+    const { title, description, category, priority, tags, isAdvanced } = req.body;
     if (!title || !description) return res.status(400).json({ error: "Titre et description requis" });
 
     const idea = await prisma.idea.create({
-        data: { title, description }
+        data: { 
+            title, 
+            description,
+            category: category || null,
+            priority: priority || null,
+            tags: tags || null,
+            isAdvanced: isAdvanced || false
+        }
     });
     res.json({ ...idea, id: idea.id.toString(), comments: [], hasLiked: false });
 });

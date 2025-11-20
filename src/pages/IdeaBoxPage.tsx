@@ -19,6 +19,9 @@ interface Idea {
     comments: Comment[];
     hasLiked: boolean;
     createdAt: string;
+    category?: string;
+    priority?: string;
+    tags?: string;
 }
 
 export const IdeaBoxPage: React.FC = () => {
@@ -42,7 +45,14 @@ export const IdeaBoxPage: React.FC = () => {
         }
     };
 
-    const handleAddIdea = async (title: string, description: string) => {
+    const handleAddIdea = async (data: {
+        title: string;
+        description: string;
+        category?: string;
+        priority?: string;
+        tags?: string;
+        isAdvanced?: boolean;
+    }) => {
         const token = localStorage.getItem('token');
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         try {
@@ -52,7 +62,14 @@ export const IdeaBoxPage: React.FC = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ title, description }),
+                body: JSON.stringify({
+                    title: data.title,
+                    description: data.description,
+                    category: data.category,
+                    priority: data.priority,
+                    tags: data.tags,
+                    isAdvanced: data.isAdvanced
+                }),
             });
             const newIdea = await response.json();
             setIdeas([newIdea, ...ideas]);
@@ -143,6 +160,9 @@ export const IdeaBoxPage: React.FC = () => {
                         <IdeaCard
                             key={idea.id}
                             {...idea}
+                            category={idea.category}
+                            priority={idea.priority}
+                            tags={idea.tags}
                             onLike={handleLike}
                             onAddComment={handleAddComment}
                         />

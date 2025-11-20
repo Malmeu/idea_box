@@ -24,6 +24,11 @@ model Idea {
   createdAt   DateTime  @default(now())
   comments    Comment[]
   userLikes   Like[]
+  // Champs optionnels pour le formulaire avancé
+  category    String?
+  priority    String?
+  tags        String?
+  isAdvanced  Boolean   @default(false)
 }
 
 model Comment {
