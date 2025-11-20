@@ -3,7 +3,7 @@ import { Layout } from './components/Layout';
 import { IdeaBoxPage } from './pages/IdeaBoxPage';
 import { SafeSpacePage } from './pages/SafeSpacePage';
 
-import { LoginPage } from './pages/LoginPage';
+import { LandingPage } from './pages/LandingPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -11,7 +11,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/login" element={<LandingPage />} />
 
         <Route path="/*" element={
           <ProtectedRoute>
