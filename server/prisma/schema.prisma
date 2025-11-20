@@ -51,4 +51,9 @@ model Message {
   content   String
   color     String
   createdAt DateTime @default(now())
+  // Champs optionnels pour le formulaire avancé
+  title     String?
+  category  String?
+  mood      String?
+  isAdvanced Boolean @default(false)
 }

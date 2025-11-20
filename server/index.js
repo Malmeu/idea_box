@@ -189,13 +189,17 @@ app.get('/api/messages', async (req, res) => {
 });
 
 app.post('/api/messages', async (req, res) => {
-    const { content, color } = req.body;
+    const { content, color, title, category, mood, isAdvanced } = req.body;
     if (!content) return res.status(400).json({ error: "Contenu requis" });
 
     const message = await prisma.message.create({
         data: {
             content,
-            color: color || 'bg-pastel-blue/40'
+            color: color || 'bg-pastel-blue/40',
+            title: title || null,
+            category: category || null,
+            mood: mood || null,
+            isAdvanced: isAdvanced || false
         }
     });
     res.json({ ...message, id: message.id.toString() });

@@ -8,6 +8,10 @@ interface Message {
     content: string;
     createdAt: string;
     color: string;
+    title?: string;
+    category?: string;
+    mood?: string;
+    isAdvanced?: boolean;
 }
 
 const PASTEL_COLORS = [
@@ -38,14 +42,27 @@ export const SafeSpacePage: React.FC = () => {
         }
     };
 
-    const handleAddMessage = async (content: string) => {
+    const handleAddMessage = async (data: {
+        content: string;
+        title?: string;
+        category?: string;
+        mood?: string;
+        isAdvanced?: boolean;
+    }) => {
         const randomColor = PASTEL_COLORS[Math.floor(Math.random() * PASTEL_COLORS.length)];
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         try {
             const response = await fetch(`${apiUrl}/api/messages`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content, color: randomColor }),
+                body: JSON.stringify({ 
+                    content: data.content, 
+                    color: randomColor,
+                    title: data.title,
+                    category: data.category,
+                    mood: data.mood,
+                    isAdvanced: data.isAdvanced
+                }),
             });
             const newMessage = await response.json();
             setMessages([newMessage, ...messages]);
@@ -87,6 +104,10 @@ export const SafeSpacePage: React.FC = () => {
                             message={message.content}
                             color={message.color}
                             date={message.createdAt}
+                            title={message.title}
+                            category={message.category}
+                            mood={message.mood}
+                            isAdvanced={message.isAdvanced}
                         />
                     ))}
                 </AnimatePresence>
