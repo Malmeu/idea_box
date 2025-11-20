@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IdeaForm } from '../features/IdeaBox/IdeaForm';
 import { IdeaCard } from '../features/IdeaBox/IdeaCard';
+import { Toast } from '../components/Toast';
+import { useToast } from '../hooks/useToast';
 
 interface Comment {
     id: string;
@@ -26,6 +28,7 @@ interface Idea {
 
 export const IdeaBoxPage: React.FC = () => {
     const [ideas, setIdeas] = useState<Idea[]>([]);
+    const { toast, showToast, hideToast } = useToast();
 
     useEffect(() => {
         fetchIdeas();
@@ -76,14 +79,14 @@ export const IdeaBoxPage: React.FC = () => {
             
             if (!response.ok) {
                 // Afficher l'erreur de validation
-                alert(result.error || 'Erreur lors de l\'ajout de l\'idée');
+                showToast(result.error || 'Erreur lors de l\'ajout de l\'idée', 'error');
                 return;
             }
             
             setIdeas([result, ...ideas]);
         } catch (error) {
             console.error('Erreur ajout idée', error);
-            alert('Erreur de connexion au serveur');
+            showToast('Erreur de connexion au serveur', 'error');
         }
     };
 
@@ -139,8 +142,15 @@ export const IdeaBoxPage: React.FC = () => {
     };
 
     return (
-        <div className="space-y-8 pb-12">
-            <header className="text-center mb-12">
+        <>
+            <Toast 
+                message={toast.message}
+                type={toast.type}
+                isVisible={toast.isVisible}
+                onClose={hideToast}
+            />
+            <div className="space-y-8 pb-12">
+                <header className="text-center mb-12">
                 <motion.h1
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -179,5 +189,6 @@ export const IdeaBoxPage: React.FC = () => {
                 </AnimatePresence>
             </div>
         </div>
+        </>
     );
 };

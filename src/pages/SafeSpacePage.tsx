@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AnonymousForm } from '../features/SafeSpace/AnonymousForm';
 import { MessageCard } from '../features/SafeSpace/MessageCard';
+import { Toast } from '../components/Toast';
+import { useToast } from '../hooks/useToast';
 
 interface Message {
     id: string;
@@ -26,6 +28,7 @@ const PASTEL_COLORS = [
 
 export const SafeSpacePage: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);
+    const { toast, showToast, hideToast } = useToast();
 
     useEffect(() => {
         fetchMessages();
@@ -68,21 +71,28 @@ export const SafeSpacePage: React.FC = () => {
             const result = await response.json();
             
             if (!response.ok) {
-                // Afficher l'erreur de validation
-                alert(result.error || 'Erreur lors de l\'envoi du message');
+                // Afficher l'erreur de validation avec le toast
+                showToast(result.error || 'Erreur lors de l\'envoi du message', 'error');
                 return;
             }
             
             setMessages([result, ...messages]);
         } catch (error) {
             console.error('Erreur ajout message', error);
-            alert('Erreur de connexion au serveur');
+            showToast('Erreur de connexion au serveur', 'error');
         }
     };
 
     return (
-        <div className="space-y-8 pb-12">
-            <header className="text-center mb-12">
+        <>
+            <Toast 
+                message={toast.message}
+                type={toast.type}
+                isVisible={toast.isVisible}
+                onClose={hideToast}
+            />
+            <div className="space-y-8 pb-12">
+                <header className="text-center mb-12">
                 <motion.h1
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -121,5 +131,6 @@ export const SafeSpacePage: React.FC = () => {
                 </AnimatePresence>
             </div>
         </div>
+        </>
     );
 };
