@@ -119,48 +119,149 @@ export const LandingPage: React.FC = () => {
 
                 {/* Visual Composition */}
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
                     className="relative hidden lg:block h-[600px]"
                 >
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/10 backdrop-blur-2xl rounded-[3rem] border border-white/50 shadow-2xl p-8 transform rotate-[-6deg] hover:rotate-0 transition-all duration-700">
-                        <div className="h-full w-full bg-slate-50/50 rounded-[2rem] overflow-hidden relative">
-                            {/* Example Idea Card */}
-                            <div className="absolute top-8 left-8 right-8 bg-white rounded-2xl shadow-sm p-4 flex gap-4 items-start animate-[float_6s_ease-in-out_infinite]">
-                                <div className="w-12 h-12 bg-pastel-blue/20 rounded-xl flex items-center justify-center flex-shrink-0 text-pastel-blue">
-                                    <Lightbulb className="w-6 h-6" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/10 backdrop-blur-xl rounded-[3rem] border border-white/50 shadow-xl p-8">
+                        <div className="h-full w-full bg-slate-50/30 rounded-[2rem] overflow-hidden relative">
+                            
+                            {/* Carte Idée 1 - Style réel */}
+                            <motion.div
+                                animate={{ 
+                                    y: [0, -8, 0],
+                                }}
+                                transition={{ 
+                                    duration: 4,
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                }}
+                                className="absolute top-8 left-8 right-8 bg-white rounded-2xl p-6 shadow-sm border border-slate-100"
+                            >
+                                <div className="flex items-center gap-2 mb-3 pb-3 border-b border-slate-100">
+                                    <span className="text-xs bg-pastel-blue/20 px-2 py-1 rounded-full text-slate-700">
+                                        💡 Innovation
+                                    </span>
+                                    <span className="text-xs flex items-center gap-1 text-yellow-600">
+                                        <span>🟡</span>
+                                        <span className="font-medium">Moyenne</span>
+                                    </span>
                                 </div>
-                                <div className="flex-1">
-                                    <div className="h-4 w-3/4 bg-slate-100 rounded mb-2" />
-                                    <p className="text-sm text-slate-600 font-medium">"Organiser un hackathon interne pour innover ensemble !"</p>
-                                    <div className="flex gap-3 mt-2">
-                                        <span className="text-xs text-pastel-blue bg-pastel-blue/10 px-2 py-1 rounded-full">💡 Innovation</span>
-                                        <span className="text-xs text-slate-400 flex items-center gap-1">❤️ 12</span>
+                                <h3 className="text-lg font-semibold text-slate-800 mb-2">
+                                    Hackathon interne
+                                </h3>
+                                <p className="text-slate-600 mb-4 leading-relaxed text-sm">
+                                    Organiser un hackathon trimestriel pour innover ensemble !
+                                </p>
+                                <div className="flex flex-wrap gap-2 mb-4">
+                                    <span className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-full">
+                                        #innovation
+                                    </span>
+                                    <span className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-full">
+                                        #team
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-4 pt-4 border-t border-slate-50">
+                                    <div className="flex items-center gap-2 text-pastel-pink">
+                                        <div className="p-2 rounded-full bg-pastel-pink/20">
+                                            <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                                        </div>
+                                        <span className="font-medium">12</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-slate-500">
+                                        <div className="p-2 rounded-full bg-slate-50">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                                        </div>
+                                        <span className="font-medium">5</span>
                                     </div>
                                 </div>
-                            </div>
+                            </motion.div>
 
-                            {/* Example Safe Space Message */}
-                            <div className="absolute top-48 left-12 right-4 bg-white rounded-2xl shadow-sm p-4 flex gap-4 items-start animate-[float_7s_ease-in-out_infinite_1s]">
-                                <div className="w-12 h-12 bg-pastel-lavender/20 rounded-xl flex items-center justify-center flex-shrink-0 text-pastel-lavender">
-                                    <Shield className="w-6 h-6" />
+                            {/* Carte Safe Space 1 - Style réel */}
+                            <motion.div
+                                animate={{ 
+                                    y: [0, -10, 0],
+                                }}
+                                transition={{ 
+                                    duration: 5,
+                                    repeat: Infinity,
+                                    ease: "easeInOut",
+                                    delay: 0.5
+                                }}
+                                className="absolute top-64 left-12 right-4 bg-pastel-lavender/40 rounded-2xl p-6 shadow-sm"
+                            >
+                                <div className="flex items-center gap-2 mb-3 pb-3 border-b border-slate-200/50">
+                                    <span className="text-xs bg-white/50 px-2 py-1 rounded-full">
+                                        💙 Émotions
+                                    </span>
+                                    <span className="text-lg" title="grateful">
+                                        🙏
+                                    </span>
                                 </div>
-                                <div className="flex-1">
-                                    <div className="h-4 w-1/2 bg-slate-100 rounded mb-2" />
-                                    <p className="text-sm text-slate-600 font-medium italic">"Merci pour l'écoute bienveillante lors de la réunion d'hier..."</p>
-                                    <div className="flex gap-3 mt-2">
-                                        <span className="text-xs text-pastel-lavender bg-pastel-lavender/10 px-2 py-1 rounded-full">🛡️ Anonyme</span>
-                                    </div>
+                                <h3 className="text-lg font-semibold text-slate-800 mb-2">
+                                    Merci pour le soutien
+                                </h3>
+                                <p className="text-slate-700 font-medium leading-relaxed font-handwriting text-sm">
+                                    "Merci pour l'écoute bienveillante lors de la réunion d'hier. Ça m'a vraiment aidé."
+                                </p>
+                                <div className="mt-4 text-right">
+                                    <span className="text-xs text-slate-500/80">
+                                        21:23
+                                    </span>
                                 </div>
-                            </div>
-                            {/* Floating elements */}
-                            <div className="absolute bottom-12 right-12 p-4 bg-slate-800 text-white rounded-2xl shadow-xl">
+                            </motion.div>
+
+                            {/* Carte Safe Space 2 - Plus petite */}
+                            <motion.div
+                                animate={{ 
+                                    y: [0, -6, 0],
+                                }}
+                                transition={{ 
+                                    duration: 4.5,
+                                    repeat: Infinity,
+                                    ease: "easeInOut",
+                                    delay: 1
+                                }}
+                                className="absolute top-[480px] right-8 w-64 bg-pastel-mint/40 rounded-2xl p-5 shadow-sm"
+                            >
+                                <p className="text-slate-700 font-medium leading-relaxed font-handwriting text-sm">
+                                    "Je me sens plus serein depuis que je peux m'exprimer ici 🌸"
+                                </p>
+                                <div className="mt-3 text-right">
+                                    <span className="text-xs text-slate-500/80">
+                                        20:15
+                                    </span>
+                                </div>
+                            </motion.div>
+
+                            {/* Badge "En ligne" */}
+                            <motion.div
+                                animate={{ 
+                                    scale: [1, 1.05, 1],
+                                }}
+                                transition={{ 
+                                    duration: 3,
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                }}
+                                className="absolute bottom-8 right-8 p-4 bg-slate-800 text-white rounded-2xl shadow-lg"
+                            >
                                 <div className="flex items-center gap-3">
-                                    <div className="w-2 h-2 bg-green-400 rounded-full" />
-                                    <span className="font-medium">En ligne</span>
+                                    <motion.div 
+                                        animate={{ 
+                                            opacity: [1, 0.5, 1],
+                                        }}
+                                        transition={{ 
+                                            duration: 2,
+                                            repeat: Infinity,
+                                            ease: "easeInOut"
+                                        }}
+                                        className="w-2 h-2 bg-green-400 rounded-full"
+                                    />
+                                    <span className="font-medium text-sm">En ligne</span>
                                 </div>
-                            </div>
+                            </motion.div>
                         </div>
                     </div>
                 </motion.div>
