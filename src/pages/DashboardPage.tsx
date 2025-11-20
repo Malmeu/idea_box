@@ -30,39 +30,53 @@ export const DashboardPage: React.FC = () => {
             return;
         }
 
-        fetchData();
+        fetchStats();
     }, [navigate]);
 
-    const fetchData = async () => {
+    const fetchStats = async () => {
+        const token = localStorage.getItem('token');
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         try {
             const [ideasRes, messagesRes] = await Promise.all([
-                fetch('http://localhost:3000/api/ideas'),
-                fetch('http://localhost:3000/api/messages')
+                fetch(`${apiUrl}/api/ideas`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                fetch(`${apiUrl}/api/messages`, { headers: { 'Authorization': `Bearer ${token}` } })
             ]);
-            setIdeas(await ideasRes.json());
-            setMessages(await messagesRes.json());
+
+            const ideasData = await ideasRes.json();
+            const messagesData = await messagesRes.json();
+
+            setIdeas(ideasData);
+            setMessages(messagesData);
         } catch (error) {
-            console.error('Erreur chargement données', error);
+            console.error('Erreur chargement stats', error);
         }
     };
 
-    const handleDelete = async (type: 'ideas' | 'messages', id: string) => {
+    const handleDeleteIdea = async (id: string) => {
+        if (!confirm('Supprimer cette idée ?')) return;
         const token = localStorage.getItem('token');
-        if (!confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) return;
-
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         try {
-            const res = await fetch(`http://localhost:3000/api/${type}/${id}`, {
+            await fetch(`${apiUrl}/api/ideas/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
+            fetchStats();
+        } catch (error) {
+            console.error('Erreur suppression', error);
+        }
+    };
 
-            if (res.ok) {
-                if (type === 'ideas') {
-                    setIdeas(ideas.filter(i => i.id !== id));
-                } else {
-                    setMessages(messages.filter(m => m.id !== id));
-                }
-            }
+    const handleDeleteMessage = async (id: string) => {
+        if (!confirm('Supprimer ce message ?')) return;
+        const token = localStorage.getItem('token');
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        try {
+            await fetch(`${apiUrl}/api/messages/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            fetchStats();
         } catch (error) {
             console.error('Erreur suppression', error);
         }
@@ -110,7 +124,7 @@ export const DashboardPage: React.FC = () => {
                                         </div>
                                     </div>
                                     <button
-                                        onClick={() => handleDelete('ideas', idea.id)}
+                                        onClick={() => handleDeleteIdea(idea.id)}
                                         className="text-slate-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg transition-colors"
                                     >
                                         <Trash2 className="w-4 h-4" />

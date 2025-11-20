@@ -28,8 +28,9 @@ export const SafeSpacePage: React.FC = () => {
     }, []);
 
     const fetchMessages = async () => {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         try {
-            const response = await fetch('http://localhost:3000/api/messages');
+            const response = await fetch(`${apiUrl}/api/messages`);
             const data = await response.json();
             setMessages(data);
         } catch (error) {
@@ -39,8 +40,9 @@ export const SafeSpacePage: React.FC = () => {
 
     const handleAddMessage = async (content: string) => {
         const randomColor = PASTEL_COLORS[Math.floor(Math.random() * PASTEL_COLORS.length)];
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         try {
-            const response = await fetch('http://localhost:3000/api/messages', {
+            const response = await fetch(`${apiUrl}/api/messages`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ content, color: randomColor }),

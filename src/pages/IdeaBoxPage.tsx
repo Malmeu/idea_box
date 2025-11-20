@@ -30,8 +30,9 @@ export const IdeaBoxPage: React.FC = () => {
 
     const fetchIdeas = async () => {
         const token = localStorage.getItem('token');
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         try {
-            const response = await fetch('http://localhost:3000/api/ideas', {
+            const response = await fetch(`${apiUrl}/api/ideas`, {
                 headers: token ? { 'Authorization': `Bearer ${token}` } : {}
             });
             const data = await response.json();
@@ -43,8 +44,9 @@ export const IdeaBoxPage: React.FC = () => {
 
     const handleAddIdea = async (title: string, description: string) => {
         const token = localStorage.getItem('token');
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         try {
-            const response = await fetch('http://localhost:3000/api/ideas', {
+            const response = await fetch(`${apiUrl}/api/ideas`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -61,8 +63,9 @@ export const IdeaBoxPage: React.FC = () => {
 
     const handleLike = async (id: string) => {
         const token = localStorage.getItem('token');
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         try {
-            const response = await fetch(`http://localhost:3000/api/ideas/${id}/like`, {
+            const response = await fetch(`${apiUrl}/api/ideas/${id}/like`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -83,8 +86,9 @@ export const IdeaBoxPage: React.FC = () => {
 
     const handleAddComment = async (id: string, content: string) => {
         const token = localStorage.getItem('token');
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         try {
-            const response = await fetch(`http://localhost:3000/api/ideas/${id}/comments`, {
+            const response = await fetch(`${apiUrl}/api/ideas/${id}/comments`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
