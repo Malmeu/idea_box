@@ -74,15 +74,15 @@ export const IdeaBoxPage: React.FC = () => {
                     isAdvanced: data.isAdvanced
                 }),
             });
-            
+
             const result = await response.json();
-            
+
             if (!response.ok) {
                 // Afficher l'erreur de validation
                 showToast(result.error || 'Erreur lors de l\'ajout de l\'idée', 'error');
                 return;
             }
-            
+
             setIdeas([result, ...ideas]);
         } catch (error) {
             console.error('Erreur ajout idée', error);
@@ -143,7 +143,7 @@ export const IdeaBoxPage: React.FC = () => {
 
     return (
         <>
-            <Toast 
+            <Toast
                 message={toast.message}
                 type={toast.type}
                 isVisible={toast.isVisible}
@@ -151,44 +151,100 @@ export const IdeaBoxPage: React.FC = () => {
             />
             <div className="space-y-8 pb-12">
                 <header className="text-center mb-12">
-                <motion.h1
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-4xl font-bold text-slate-800 mb-4"
-                >
-                    Boîte à Idées
-                </motion.h1>
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="text-slate-600 text-lg max-w-2xl mx-auto"
-                >
-                    Partagez vos idées lumineuses pour améliorer notre quotidien.
-                    Votez pour celles qui vous inspirent !
-                </motion.p>
-            </header>
+                    <motion.h1
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-4xl font-bold text-slate-800 mb-4"
+                    >
+                        Boîte à Idées
+                    </motion.h1>
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-slate-600 text-lg max-w-2xl mx-auto"
+                    >
+                        Partagez vos idées lumineuses pour améliorer notre quotidien.
+                        Votez pour celles qui vous inspirent !
+                    </motion.p>
+                </header>
 
-            <div className="max-w-2xl mx-auto mb-12">
-                <IdeaForm onSubmit={handleAddIdea} />
-            </div>
+                <div className="max-w-2xl mx-auto mb-16">
+                    <div className="relative group">
+                        {/* Effet de contour animé */}
+                        <div className="absolute -inset-1 bg-gradient-to-r from-pastel-blue via-pastel-lavender to-pastel-pink rounded-[2rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <AnimatePresence mode="popLayout">
-                    {ideas.map((idea) => (
-                        <IdeaCard
-                            key={idea.id}
-                            {...idea}
-                            category={idea.category}
-                            priority={idea.priority}
-                            tags={idea.tags}
-                            onLike={handleLike}
-                            onAddComment={handleAddComment}
-                        />
-                    ))}
-                </AnimatePresence>
+                        <div className="relative">
+                            <IdeaForm onSubmit={handleAddIdea} />
+                        </div>
+                    </div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="mt-12 grid md:grid-cols-2 gap-6"
+                    >
+                        <div className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-pastel-blue/30 shadow-sm">
+                            <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                                <span className="bg-pastel-blue/20 p-2 rounded-lg text-blue-600">💡</span>
+                                Bonnes pratiques
+                            </h3>
+                            <ul className="space-y-3 text-slate-600 text-sm">
+                                <li className="flex items-start gap-2">
+                                    <span className="text-blue-500 mt-1">✓</span>
+                                    Soyez précis et constructif dans vos propositions.
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-blue-500 mt-1">✓</span>
+                                    Vérifiez si l'idée n'a pas déjà été proposée.
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-blue-500 mt-1">✓</span>
+                                    Utilisez des tags pertinents pour faciliter la recherche.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-pastel-pink/30 shadow-sm">
+                            <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                                <span className="bg-pastel-pink/20 p-2 rounded-lg text-red-500">⚠️</span>
+                                Points de vigilance
+                            </h3>
+                            <ul className="space-y-3 text-slate-600 text-sm">
+                                <li className="flex items-start gap-2">
+                                    <span className="text-red-400 mt-1">✕</span>
+                                    Évitez les plaintes sans proposition de solution.
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-red-400 mt-1">✕</span>
+                                    Restez courtois dans les commentaires et débats.
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-red-400 mt-1">✕</span>
+                                    Ne spammez pas la même idée plusieurs fois.
+                                </li>
+                            </ul>
+                        </div>
+                    </motion.div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <AnimatePresence mode="popLayout">
+                        {ideas.map((idea) => (
+                            <IdeaCard
+                                key={idea.id}
+                                {...idea}
+                                category={idea.category}
+                                priority={idea.priority}
+                                tags={idea.tags}
+                                onLike={handleLike}
+                                onAddComment={handleAddComment}
+                            />
+                        ))}
+                    </AnimatePresence>
+                </div>
             </div>
-        </div>
         </>
     );
 };
