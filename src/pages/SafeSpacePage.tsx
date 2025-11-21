@@ -111,57 +111,64 @@ export const SafeSpacePage: React.FC = () => {
                     </motion.p>
                 </header>
 
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="max-w-4xl mx-auto mb-12 grid md:grid-cols-2 gap-6"
-                >
-                    <div className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-pastel-green/30 shadow-sm">
-                        <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                            <span className="bg-pastel-green/20 p-2 rounded-lg text-green-600">✨</span>
-                            Ce que nous encourageons
-                        </h3>
-                        <ul className="space-y-3 text-slate-600 text-sm">
-                            <li className="flex items-start gap-2">
-                                <span className="text-green-500 mt-1">✓</span>
-                                Exprimez vos ressentis avec honnêteté et bienveillance.
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <span className="text-green-500 mt-1">✓</span>
-                                Partagez des idées constructives pour améliorer notre quotidien.
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <span className="text-green-500 mt-1">✓</span>
-                                Soutenez vos collègues en lisant leurs témoignages.
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-pastel-pink/30 shadow-sm">
-                        <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                            <span className="bg-pastel-pink/20 p-2 rounded-lg text-red-500">⚠️</span>
-                            À éviter absolument
-                        </h3>
-                        <ul className="space-y-3 text-slate-600 text-sm">
-                            <li className="flex items-start gap-2">
-                                <span className="text-red-400 mt-1">✕</span>
-                                Les attaques personnelles, le harcèlement ou les propos haineux.
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <span className="text-red-400 mt-1">✕</span>
-                                Divulguer des informations confidentielles ou des noms propres.
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <span className="text-red-400 mt-1">✕</span>
-                                Utiliser cet espace pour régler des comptes personnels.
-                            </li>
-                        </ul>
-                    </div>
-                </motion.div>
-
                 <div className="max-w-2xl mx-auto mb-16">
-                    <AnonymousForm onSubmit={handleAddMessage} />
+                    <div className="relative group">
+                        {/* Effet de contour animé */}
+                        <div className="absolute -inset-1 bg-gradient-to-r from-pastel-green via-pastel-mint to-pastel-blue rounded-[2rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+
+                        <div className="relative">
+                            <AnonymousForm onSubmit={handleAddMessage} />
+                        </div>
+                    </div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="mt-12 grid md:grid-cols-2 gap-6"
+                    >
+                        <div className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-pastel-green/30 shadow-sm">
+                            <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                                <span className="bg-pastel-green/20 p-2 rounded-lg text-green-600">✨</span>
+                                Ce que nous encourageons
+                            </h3>
+                            <ul className="space-y-3 text-slate-600 text-sm">
+                                <li className="flex items-start gap-2">
+                                    <span className="text-green-500 mt-1">✓</span>
+                                    Exprimez vos ressentis avec honnêteté et bienveillance.
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-green-500 mt-1">✓</span>
+                                    Partagez des idées constructives pour améliorer notre quotidien.
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-green-500 mt-1">✓</span>
+                                    Soutenez vos collègues en lisant leurs témoignages.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-pastel-pink/30 shadow-sm">
+                            <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                                <span className="bg-pastel-pink/20 p-2 rounded-lg text-red-500">⚠️</span>
+                                À éviter absolument
+                            </h3>
+                            <ul className="space-y-3 text-slate-600 text-sm">
+                                <li className="flex items-start gap-2">
+                                    <span className="text-red-400 mt-1">✕</span>
+                                    Les attaques personnelles, le harcèlement ou les propos haineux.
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-red-400 mt-1">✕</span>
+                                    Divulguer des informations confidentielles ou des noms propres.
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-red-400 mt-1">✕</span>
+                                    Utiliser cet espace pour régler des comptes personnels.
+                                </li>
+                            </ul>
+                        </div>
+                    </motion.div>
                 </div>
 
                 <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
