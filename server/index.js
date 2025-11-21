@@ -259,11 +259,19 @@ app.post('/api/messages', async (req, res) => {
 app.delete('/api/ideas/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
     try {
-        await prisma.comment.deleteMany({ where: { ideaId: parseInt(id) } }); // Delete related comments first
-        await prisma.idea.delete({ where: { id: parseInt(id) } });
+        const ideaId = parseInt(id);
+        
+        // Supprimer d'abord toutes les relations
+        await prisma.like.deleteMany({ where: { ideaId } }); // Delete likes first
+        await prisma.comment.deleteMany({ where: { ideaId } }); // Delete comments
+        
+        // Puis supprimer l'idée
+        await prisma.idea.delete({ where: { id: ideaId } });
+        
         res.json({ success: true });
     } catch (e) {
-        res.status(500).json({ error: "Erreur lors de la suppression" });
+        console.error('Erreur suppression idée:', e);
+        res.status(500).json({ error: "Erreur lors de la suppression", details: e.message });
     }
 });
 
