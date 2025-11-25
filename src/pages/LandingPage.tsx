@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, User, ArrowRight, Lightbulb, Shield, X, Sparkles } from 'lucide-react';
+import { Lock, User, ArrowRight, Lightbulb, Shield, X, Sparkles, Heart, Users } from 'lucide-react';
 
 export const LandingPage: React.FC = () => {
     const [showLogin, setShowLogin] = useState(false);
@@ -47,7 +47,7 @@ export const LandingPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#FAFAFA] font-sans text-slate-800 overflow-hidden relative">
+        <div className="min-h-screen bg-[#FDFBF7] font-sans text-slate-800 overflow-hidden relative">
             {/* Background Gradients */}
             <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-pastel-blue/20 rounded-full blur-[120px] opacity-60" />
             <div className="absolute bottom-[-20%] left-[-10%] w-[800px] h-[800px] bg-pastel-lavender/20 rounded-full blur-[120px] opacity-60" />
@@ -126,13 +126,13 @@ export const LandingPage: React.FC = () => {
                 >
                     <div className="absolute inset-0 bg-linear-to-br from-white/40 to-white/10 backdrop-blur-xl rounded-[3rem] border border-white/50 shadow-xl p-8">
                         <div className="h-full w-full bg-slate-50/30 rounded-4xl overflow-hidden relative">
-                            
+
                             {/* Carte Idée 1 - Style réel */}
                             <motion.div
-                                animate={{ 
+                                animate={{
                                     y: [0, -8, 0],
                                 }}
-                                transition={{ 
+                                transition={{
                                     duration: 4,
                                     repeat: Infinity,
                                     ease: "easeInOut"
@@ -165,7 +165,7 @@ export const LandingPage: React.FC = () => {
                                 <div className="flex items-center gap-4 pt-4 border-t border-slate-50">
                                     <div className="flex items-center gap-2 text-pastel-pink">
                                         <div className="p-2 rounded-full bg-pastel-pink/20">
-                                            <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                                            <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
                                         </div>
                                         <span className="font-medium">12</span>
                                     </div>
@@ -180,10 +180,10 @@ export const LandingPage: React.FC = () => {
 
                             {/* Carte Safe Space 1 - Style réel */}
                             <motion.div
-                                animate={{ 
+                                animate={{
                                     y: [0, -10, 0],
                                 }}
-                                transition={{ 
+                                transition={{
                                     duration: 5,
                                     repeat: Infinity,
                                     ease: "easeInOut",
@@ -214,10 +214,10 @@ export const LandingPage: React.FC = () => {
 
                             {/* Carte Safe Space 2 - Plus petite */}
                             <motion.div
-                                animate={{ 
+                                animate={{
                                     y: [0, -6, 0],
                                 }}
-                                transition={{ 
+                                transition={{
                                     duration: 4.5,
                                     repeat: Infinity,
                                     ease: "easeInOut",
@@ -237,10 +237,10 @@ export const LandingPage: React.FC = () => {
 
                             {/* Badge "En ligne" */}
                             <motion.div
-                                animate={{ 
+                                animate={{
                                     scale: [1, 1.05, 1],
                                 }}
-                                transition={{ 
+                                transition={{
                                     duration: 3,
                                     repeat: Infinity,
                                     ease: "easeInOut"
@@ -248,11 +248,11 @@ export const LandingPage: React.FC = () => {
                                 className="absolute bottom-8 right-8 p-4 bg-slate-800 text-white rounded-2xl shadow-lg"
                             >
                                 <div className="flex items-center gap-3">
-                                    <motion.div 
-                                        animate={{ 
+                                    <motion.div
+                                        animate={{
                                             opacity: [1, 0.5, 1],
                                         }}
-                                        transition={{ 
+                                        transition={{
                                             duration: 2,
                                             repeat: Infinity,
                                             ease: "easeInOut"
@@ -266,6 +266,149 @@ export const LandingPage: React.FC = () => {
                     </div>
                 </motion.div>
             </main>
+
+            {/* Features Section */}
+            <section className="py-24 relative overflow-hidden">
+                <div className="absolute inset-0 bg-linear-to-b from-white to-pastel-blue/10" />
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
+                    <div className="text-center mb-16">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                        >
+                            <h2 className="text-3xl lg:text-4xl font-bold text-slate-800 mb-4">Pourquoi nous rejoindre ?</h2>
+                            <p className="text-slate-600 max-w-2xl mx-auto text-lg">Une plateforme pensée pour libérer la parole et stimuler l'innovation collective.</p>
+                        </motion.div>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {[
+                            {
+                                icon: <Shield className="w-6 h-6 text-pastel-blue" />,
+                                title: "Espace Sécurisé",
+                                desc: "L'anonymat est garanti pour vous permettre de vous exprimer sans crainte.",
+                                color: "bg-pastel-blue/20"
+                            },
+                            {
+                                icon: <Users className="w-6 h-6 text-pastel-lavender" />,
+                                title: "Intelligence Collective",
+                                desc: "Co-construisez les projets de demain avec l'ensemble des collaborateurs.",
+                                color: "bg-pastel-lavender/20"
+                            },
+                            {
+                                icon: <Heart className="w-6 h-6 text-pastel-pink" />,
+                                title: "Bienveillance",
+                                desc: "Un environnement positif où chaque voix compte et est respectée.",
+                                color: "bg-pastel-pink/20"
+                            }
+                        ].map((feature, idx) => (
+                            <motion.div
+                                key={idx}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: idx * 0.1 }}
+                                className="p-8 rounded-3xl bg-white/80 backdrop-blur-sm border border-slate-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-1"
+                            >
+                                <div className={`w-14 h-14 ${feature.color} rounded-2xl flex items-center justify-center mb-6`}>
+                                    {feature.icon}
+                                </div>
+                                <h3 className="text-xl font-bold text-slate-800 mb-3">{feature.title}</h3>
+                                <p className="text-slate-500 leading-relaxed">{feature.desc}</p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* How it works */}
+            <section className="py-24 bg-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-pastel-mint/10 rounded-full blur-[100px] opacity-60 pointer-events-none" />
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
+                    <div className="grid lg:grid-cols-2 gap-16 items-center">
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                        >
+                            <h2 className="text-3xl lg:text-4xl font-bold text-slate-800 mb-12">Comment ça marche ?</h2>
+                            <div className="space-y-10">
+                                {[
+                                    {
+                                        step: "01",
+                                        title: "Proposez",
+                                        desc: "Partagez une idée ou un ressenti en quelques clics, de manière identifiée ou anonyme."
+                                    },
+                                    {
+                                        step: "02",
+                                        title: "Collaborez",
+                                        desc: "La communauté vote, commente et enrichit les propositions."
+                                    },
+                                    {
+                                        step: "03",
+                                        title: "Réalisez",
+                                        desc: "Les meilleures idées sont sélectionnées et mises en œuvre par les équipes."
+                                    }
+                                ].map((item, idx) => (
+                                    <div key={idx} className="flex gap-6 group">
+                                        <div className="text-5xl font-bold text-pastel-blue/30 font-serif group-hover:text-pastel-blue/50 transition-colors">{item.step}</div>
+                                        <div>
+                                            <h3 className="text-xl font-bold text-slate-800 mb-2">{item.title}</h3>
+                                            <p className="text-slate-500 leading-relaxed">{item.desc}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </motion.div>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                            className="relative"
+                        >
+                            <div className="absolute inset-0 bg-pastel-lavender/20 rounded-full blur-3xl opacity-60" />
+                            <div className="relative bg-white p-4 rounded-[2rem] shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500 border border-slate-100">
+                                <img
+                                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80"
+                                    alt="Team collaboration"
+                                    className="rounded-[1.5rem] w-full h-auto"
+                                />
+                                <div className="absolute bottom-8 left-8 right-8 bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-lg border border-white/50">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex -space-x-2">
+                                            {[1, 2, 3].map(i => (
+                                                <div key={i} className={`w-8 h-8 rounded-full border-2 border-white bg-pastel-${i === 1 ? 'blue' : i === 2 ? 'pink' : 'green'} flex items-center justify-center text-[10px] text-white font-bold`}>
+                                                    {String.fromCharCode(64 + i)}
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <p className="text-sm font-medium text-slate-700">Rejoignez +150 collaborateurs</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Footer */}
+            <footer className="bg-slate-50 py-12 border-t border-slate-100">
+                <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="flex items-center gap-2">
+                        <img src="/logoCollable11.png" alt="Logo" className="h-8 w-auto grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all" />
+                        <span className="text-slate-400 text-sm">© 2024 IdeaBox. All rights reserved.</span>
+                    </div>
+                    <div className="flex gap-8 text-slate-400 text-sm font-medium">
+                        <a href="#" className="hover:text-pastel-blue transition-colors">Confidentialité</a>
+                        <a href="#" className="hover:text-pastel-blue transition-colors">Conditions</a>
+                        <a href="#" className="hover:text-pastel-blue transition-colors">Contact</a>
+                    </div>
+                </div>
+            </footer>
 
             {/* Login Modal */}
             <AnimatePresence>

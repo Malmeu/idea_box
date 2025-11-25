@@ -2,6 +2,9 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { IdeaBoxPage } from './pages/IdeaBoxPage';
 import { SafeSpacePage } from './pages/SafeSpacePage';
+import { EmergencyPage } from './pages/EmergencyPage';
+import { AboutUPage } from './pages/AboutUPage';
+
 
 import { LandingPage } from './pages/LandingPage';
 import { DashboardPage } from './pages/DashboardPage';
@@ -19,6 +22,8 @@ function App() {
               <Routes>
                 <Route path="/" element={<IdeaBoxPage />} />
                 <Route path="/safe-space" element={<SafeSpacePage />} />
+                <Route path="/emergency" element={<EmergencyPage />} />
+                <Route path="/about-u" element={<AboutUPage />} />
                 <Route path="/dashboard" element={
                   <ProtectedRoute requireAdmin>
                     <DashboardPage />

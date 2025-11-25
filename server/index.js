@@ -113,8 +113,8 @@ app.post('/api/ideas', async (req, res) => {
     }
 
     const idea = await prisma.idea.create({
-        data: { 
-            title: titleValidation.cleanedContent, 
+        data: {
+            title: titleValidation.cleanedContent,
             description: descriptionValidation.cleanedContent,
             category: category || null,
             priority: priority || null,
@@ -241,9 +241,9 @@ app.post('/api/messages', async (req, res) => {
             isAdvanced: isAdvanced || false
         }
     });
-    
+
     // Ne retourner que les données nécessaires, sans métadonnées
-    res.json({ 
+    res.json({
         id: message.id.toString(),
         content: message.content,
         color: message.color,
@@ -260,14 +260,14 @@ app.delete('/api/ideas/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
     try {
         const ideaId = parseInt(id);
-        
+
         // Supprimer d'abord toutes les relations
         await prisma.like.deleteMany({ where: { ideaId } }); // Delete likes first
         await prisma.comment.deleteMany({ where: { ideaId } }); // Delete comments
-        
+
         // Puis supprimer l'idée
         await prisma.idea.delete({ where: { id: ideaId } });
-        
+
         res.json({ success: true });
     } catch (e) {
         console.error('Erreur suppression idée:', e);
@@ -282,6 +282,118 @@ app.delete('/api/messages/:id', authenticateToken, async (req, res) => {
         res.json({ success: true });
     } catch (e) {
         res.status(500).json({ error: "Erreur lors de la suppression" });
+    }
+});
+
+// Emergency Routes
+app.post('/api/emergencies', async (req, res) => {
+    const { description, name, department, urgencyLevel, contactAgreement } = req.body;
+
+    if (!description || !name || !department || !urgencyLevel) {
+        return res.status(400).json({ error: "Tous les champs sont requis" });
+    }
+
+    try {
+        const emergency = await prisma.emergency.create({
+            data: {
+                description,
+                name,
+                department,
+                urgencyLevel,
+                contactAgreement: contactAgreement || false,
+                status: 'PENDING'
+            }
+        });
+        res.json(emergency);
+    } catch (e) {
+        console.error('Erreur création urgence:', e);
+        res.status(500).json({ error: "Erreur lors de l'envoi de l'urgence" });
+    }
+});
+
+app.get('/api/emergencies', authenticateToken, async (req, res) => {
+    // Only admins should see this, but for now we just check auth
+    if (req.user.role !== 'ADMIN') {
+        return res.status(403).json({ error: "Accès refusé" });
+    }
+
+    try {
+        const emergencies = await prisma.emergency.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(emergencies);
+    } catch (e) {
+        res.status(500).json({ error: "Erreur chargement urgences" });
+    }
+});
+
+app.patch('/api/emergencies/:id/status', authenticateToken, async (req, res) => {
+    if (req.user.role !== 'ADMIN') {
+        return res.status(403).json({ error: "Accès refusé" });
+    }
+
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!['PENDING', 'IN_PROGRESS', 'RESOLVED'].includes(status)) {
+        return res.status(400).json({ error: "Statut invalide" });
+    }
+
+    try {
+        const emergency = await prisma.emergency.update({
+            where: { id: parseInt(id) },
+            data: { status }
+        });
+        res.json(emergency);
+    } catch (e) {
+        console.error('Erreur mise à jour statut:', e);
+        res.status(500).json({ error: "Erreur lors de la mise à jour" });
+    }
+});
+
+// About U Routes
+app.get('/api/about-u', authenticateToken, async (req, res) => {
+    try {
+        const entries = await prisma.aboutU.findMany({
+            orderBy: { createdAt: 'desc' },
+            include: {
+                user: { select: { username: true } }
+            }
+        });
+        res.json(entries);
+    } catch (e) {
+        res.status(500).json({ error: "Erreur chargement About U" });
+    }
+});
+
+app.post('/api/about-u', authenticateToken, async (req, res) => {
+    const { content, type, nickname } = req.body;
+    const userId = req.user.userId;
+
+    if (!content || !type || !nickname) {
+        return res.status(400).json({ error: "Contenu, type et pseudo requis" });
+    }
+
+    // Surprise logic: if content length > 50 chars, unlock surprise
+    const isSurpriseUnlocked = content.length > 50;
+
+    try {
+        const entry = await prisma.aboutU.create({
+            data: {
+                content,
+                type,
+                nickname,
+                userId,
+                isSurpriseUnlocked
+            },
+            include: {
+                user: { select: { username: true } }
+            }
+        });
+        res.json(entry);
+    } catch (e) {
+        console.error('Erreur création About U:', e);
+        res.status(500).json({ error: "Erreur lors de la création" });
     }
 });
 
