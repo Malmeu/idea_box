@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2, LogOut, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import { Trash2, LogOut, CheckCircle, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface Idea {
