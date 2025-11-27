@@ -164,6 +164,86 @@ app.delete('/api/ideas/:id', authenticateToken, async (req, res) => {
     res.json({ message: 'Idée supprimée' });
 });
 
+// Comments Routes
+app.get('/api/ideas/:ideaId/comments', authenticateToken, async (req, res) => {
+    const { ideaId } = req.params;
+
+    const { data, error } = await supabase
+        .from('comments')
+        .select(`
+            id,
+            content,
+            created_at,
+            user:users(username)
+        `)
+        .eq('idea_id', ideaId)
+        .order('created_at', { ascending: true });
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data);
+});
+
+app.post('/api/ideas/:ideaId/comments', authenticateToken, async (req, res) => {
+    const { ideaId } = req.params;
+    const { content } = req.body;
+    const userId = req.user.userId;
+
+    if (!content || !content.trim()) {
+        return res.status(400).json({ error: "Le commentaire ne peut pas être vide" });
+    }
+
+    if (!validateContent(content)) {
+        return res.status(400).json({ error: "Contenu inapproprié détecté" });
+    }
+
+    const { data, error } = await supabase
+        .from('comments')
+        .insert([{
+            content,
+            idea_id: ideaId,
+            user_id: userId
+        }])
+        .select(`
+            id,
+            content,
+            created_at,
+            user:users(username)
+        `)
+        .single();
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data);
+});
+
+app.delete('/api/comments/:id', authenticateToken, async (req, res) => {
+    const { id } = req.params;
+    const userId = req.user.userId;
+    const userRole = req.user.role;
+
+    // Vérifier que l'utilisateur est propriétaire du commentaire ou admin
+    const { data: comment } = await supabase
+        .from('comments')
+        .select('user_id')
+        .eq('id', id)
+        .single();
+
+    if (!comment) {
+        return res.status(404).json({ error: "Commentaire non trouvé" });
+    }
+
+    if (comment.user_id !== userId && userRole !== 'ADMIN') {
+        return res.status(403).json({ error: "Accès refusé" });
+    }
+
+    const { error } = await supabase
+        .from('comments')
+        .delete()
+        .eq('id', id);
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ message: 'Commentaire supprimé' });
+});
+
 // Messages Routes
 app.get('/api/messages', async (req, res) => {
     const { data, error } = await supabase

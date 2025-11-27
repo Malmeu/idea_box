@@ -14,18 +14,18 @@ interface IdeaFormProps {
 }
 
 const IDEA_CATEGORIES = [
-    { value: 'innovation', label: 'Innovation', emoji: '💡', color: 'bg-pastel-blue/40' },
-    { value: 'improvement', label: 'Amélioration', emoji: '⚡', color: 'bg-pastel-mint/40' },
-    { value: 'event', label: 'Événement', emoji: '🎉', color: 'bg-pastel-pink/40' },
-    { value: 'wellbeing', label: 'Bien-être', emoji: '🌸', color: 'bg-pastel-lavender/40' },
-    { value: 'environment', label: 'Environnement', emoji: '🌱', color: 'bg-pastel-green/40' },
-    { value: 'other', label: 'Autre', emoji: '✨', color: 'bg-pastel-cream/60' },
+    { value: 'innovation', label: 'Innovation', emoji: '\u{1F4A1}', color: 'bg-pastel-blue/40' },
+    { value: 'improvement', label: 'Amélioration', emoji: '\u{26A1}', color: 'bg-pastel-mint/40' },
+    { value: 'event', label: 'Événement', emoji: '\u{1F389}', color: 'bg-pastel-pink/40' },
+    { value: 'wellbeing', label: 'Bien-être', emoji: '\u{1F338}', color: 'bg-pastel-lavender/40' },
+    { value: 'environment', label: 'Environnement', emoji: '\u{1F331}', color: 'bg-pastel-green/40' },
+    { value: 'other', label: 'Autre', emoji: '\u{2728}', color: 'bg-pastel-cream/60' },
 ];
 
 const PRIORITIES = [
-    { value: 'low', label: 'Basse', emoji: '🟢', color: 'bg-green-50' },
-    { value: 'medium', label: 'Moyenne', emoji: '🟡', color: 'bg-yellow-50' },
-    { value: 'high', label: 'Haute', emoji: '🔴', color: 'bg-red-50' },
+    { value: 'low', label: 'Basse', emoji: '\u{1F7E2}', color: 'bg-green-50' },
+    { value: 'medium', label: 'Moyenne', emoji: '\u{1F7E1}', color: 'bg-yellow-50' },
+    { value: 'high', label: 'Haute', emoji: '\u{1F534}', color: 'bg-red-50' },
 ];
 
 export const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit }) => {
@@ -124,8 +124,8 @@ export const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit }) => {
                                             type="button"
                                             onClick={() => setCategory(cat.value)}
                                             className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${category === cat.value
-                                                    ? `${cat.color} ring-2 ring-pastel-blue/50 font-medium`
-                                                    : 'bg-slate-50 hover:bg-slate-100 text-slate-600'
+                                                ? `${cat.color} ring-2 ring-pastel-blue/50 font-medium`
+                                                : 'bg-slate-50 hover:bg-slate-100 text-slate-600'
                                                 }`}
                                         >
                                             <span className="text-lg">{cat.emoji}</span>

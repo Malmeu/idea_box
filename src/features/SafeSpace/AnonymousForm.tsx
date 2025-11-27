@@ -13,23 +13,23 @@ interface AnonymousFormProps {
 }
 
 const CATEGORIES = [
-    { value: 'general', label: 'Général', emoji: '💬', color: 'bg-pastel-blue/40' },
-    { value: 'emotion', label: 'Émotions', emoji: '💙', color: 'bg-pastel-lavender/40' },
-    { value: 'stress', label: 'Stress/Anxiété', emoji: '😰', color: 'bg-pastel-peach/40' },
-    { value: 'joy', label: 'Joie/Gratitude', emoji: '😊', color: 'bg-pastel-mint/40' },
-    { value: 'reflection', label: 'Réflexion', emoji: '🤔', color: 'bg-pastel-cream/60' },
-    { value: 'support', label: 'Besoin de soutien', emoji: '🤝', color: 'bg-pastel-pink/40' },
+    { value: 'general', label: 'Général', emoji: '\u{1F4AC}', color: 'bg-pastel-blue/40' },
+    { value: 'emotion', label: 'Émotions', emoji: '\u{1F499}', color: 'bg-pastel-lavender/40' },
+    { value: 'stress', label: 'Stress/Anxiété', emoji: '\u{1F630}', color: 'bg-pastel-peach/40' },
+    { value: 'joy', label: 'Joie/Gratitude', emoji: '\u{1F60A}', color: 'bg-pastel-mint/40' },
+    { value: 'reflection', label: 'Réflexion', emoji: '\u{1F914}', color: 'bg-pastel-cream/60' },
+    { value: 'support', label: 'Besoin de soutien', emoji: '\u{1F91D}', color: 'bg-pastel-pink/40' },
 ];
 
 const MOODS = [
-    { value: 'happy', emoji: '😊', label: 'Heureux' },
-    { value: 'sad', emoji: '😢', label: 'Triste' },
-    { value: 'anxious', emoji: '😰', label: 'Anxieux' },
-    { value: 'calm', emoji: '😌', label: 'Calme' },
-    { value: 'angry', emoji: '😠', label: 'En colère' },
-    { value: 'confused', emoji: '😕', label: 'Confus' },
-    { value: 'grateful', emoji: '🙏', label: 'Reconnaissant' },
-    { value: 'hopeful', emoji: '🌟', label: 'Plein d\'espoir' },
+    { value: 'happy', emoji: '\u{1F60A}', label: 'Heureux' },
+    { value: 'sad', emoji: '\u{1F622}', label: 'Triste' },
+    { value: 'anxious', emoji: '\u{1F630}', label: 'Anxieux' },
+    { value: 'calm', emoji: '\u{1F60C}', label: 'Calme' },
+    { value: 'angry', emoji: '\u{1F620}', label: 'En colère' },
+    { value: 'confused', emoji: '\u{1F615}', label: 'Confus' },
+    { value: 'grateful', emoji: '\u{1F64F}', label: 'Reconnaissant' },
+    { value: 'hopeful', emoji: '\u{1F31F}', label: 'Plein d\'espoir' },
 ];
 
 export const AnonymousForm: React.FC<AnonymousFormProps> = ({ onSubmit }) => {
@@ -117,8 +117,8 @@ export const AnonymousForm: React.FC<AnonymousFormProps> = ({ onSubmit }) => {
                                         type="button"
                                         onClick={() => setCategory(cat.value)}
                                         className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${category === cat.value
-                                                ? `${cat.color} ring-2 ring-pastel-lavender/50 font-medium`
-                                                : 'bg-slate-50 hover:bg-slate-100 text-slate-600'
+                                            ? `${cat.color} ring-2 ring-pastel-lavender/50 font-medium`
+                                            : 'bg-slate-50 hover:bg-slate-100 text-slate-600'
                                             }`}
                                     >
                                         <span className="text-lg">{cat.emoji}</span>
