@@ -5,20 +5,11 @@ import { IdeaCard } from '../features/IdeaBox/IdeaCard';
 import { Toast } from '../components/Toast';
 import { useToast } from '../hooks/useToast';
 
-interface Comment {
-    id: string;
-    content: string;
-    username: string;
-    createdAt: string;
-}
-
 interface Idea {
     id: string;
     title: string;
     description: string;
     likes: number;
-    commentsCount: number;
-    comments: Comment[];
     hasLiked: boolean;
     createdAt: string;
     category?: string;
@@ -113,33 +104,6 @@ export const IdeaBoxPage: React.FC = () => {
         }
     };
 
-    const handleAddComment = async (id: string, content: string) => {
-        const token = localStorage.getItem('token');
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-        try {
-            const response = await fetch(`${apiUrl}/api/ideas/${id}/comments`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ content }),
-            });
-
-            if (response.ok) {
-                const newComment = await response.json();
-                setIdeas(ideas.map(idea =>
-                    idea.id === id ? {
-                        ...idea,
-                        comments: [newComment, ...idea.comments],
-                        commentsCount: idea.commentsCount + 1
-                    } : idea
-                ));
-            }
-        } catch (error) {
-            console.error('Erreur ajout commentaire', error);
-        }
-    };
 
     return (
         <>
@@ -234,12 +198,15 @@ export const IdeaBoxPage: React.FC = () => {
                         {ideas.map((idea) => (
                             <IdeaCard
                                 key={idea.id}
-                                {...idea}
+                                id={idea.id}
+                                title={idea.title}
+                                description={idea.description}
+                                likes={idea.likes}
+                                hasLiked={idea.hasLiked}
                                 category={idea.category}
                                 priority={idea.priority}
                                 tags={idea.tags}
                                 onLike={handleLike}
-                                onAddComment={handleAddComment}
                             />
                         ))}
                     </AnimatePresence>
