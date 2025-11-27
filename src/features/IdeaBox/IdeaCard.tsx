@@ -8,6 +8,7 @@ interface IdeaCardProps {
     title: string;
     description: string;
     likes: number;
+    commentsCount?: number;
     hasLiked: boolean;
     category?: string;
     priority?: string;
@@ -31,7 +32,7 @@ const PRIORITY_CONFIG: Record<string, { emoji: string; label: string; color: str
 };
 
 export const IdeaCard: React.FC<IdeaCardProps> = ({
-    id, title, description, likes, hasLiked, category, priority, tags, onLike
+    id, title, description, likes, commentsCount = 0, hasLiked, category, priority, tags, onLike
 }) => {
     return (
         <motion.div
@@ -86,7 +87,7 @@ export const IdeaCard: React.FC<IdeaCardProps> = ({
                 </button>
             </div>
 
-            <CommentSection ideaId={id} />
+            <CommentSection ideaId={id} initialCount={commentsCount} />
         </motion.div>
     );
 };

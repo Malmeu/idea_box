@@ -10,6 +10,7 @@ interface Idea {
     title: string;
     description: string;
     likes: number;
+    commentsCount: number;
     hasLiked: boolean;
     createdAt: string;
     category?: string;
@@ -202,6 +203,7 @@ export const IdeaBoxPage: React.FC = () => {
                                 title={idea.title}
                                 description={idea.description}
                                 likes={idea.likes}
+                                commentsCount={idea.commentsCount}
                                 hasLiked={idea.hasLiked}
                                 category={idea.category}
                                 priority={idea.priority}

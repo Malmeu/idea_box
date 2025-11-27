@@ -11,13 +11,17 @@ interface Comment {
 
 interface CommentSectionProps {
     ideaId: string;
+    initialCount?: number;
 }
 
-export const CommentSection: React.FC<CommentSectionProps> = ({ ideaId }) => {
+export const CommentSection: React.FC<CommentSectionProps> = ({ ideaId, initialCount = 0 }) => {
     const [comments, setComments] = useState<Comment[]>([]);
     const [newComment, setNewComment] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
+
+    // Utiliser initialCount si les commentaires ne sont pas encore chargés
+    const displayCount = comments.length > 0 ? comments.length : initialCount;
 
     useEffect(() => {
         if (isExpanded) {
@@ -95,7 +99,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ ideaId }) => {
                 className="flex items-center gap-2 text-sm text-slate-600 hover:text-pastel-blue transition-colors"
             >
                 <MessageCircle className="w-4 h-4" />
-                <span>{comments.length} commentaire{comments.length !== 1 ? 's' : ''}</span>
+                <span>{displayCount} commentaire{displayCount !== 1 ? 's' : ''}</span>
             </button>
 
             <AnimatePresence>
