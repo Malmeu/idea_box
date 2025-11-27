@@ -104,24 +104,49 @@ app.post('/api/ideas', authenticateToken, async (req, res) => {
 
 app.post('/api/ideas/:id/like', authenticateToken, async (req, res) => {
     const { id } = req.params;
+    const userId = req.user.userId;
 
-    const { data: idea, error: fetchError } = await supabase
-        .from('ideas')
-        .select('likes')
-        .eq('id', id)
-        .single();
+    try {
+        // Vérifier si l'utilisateur a déjà liké cette idée
+        const { data: existingLike } = await supabase
+            .from('likes')
+            .select('id')
+            .eq('user_id', userId)
+            .eq('idea_id', id)
+            .single();
 
-    if (fetchError) return res.status(500).json({ error: fetchError.message });
+        if (existingLike) {
+            return res.status(400).json({ error: "Vous avez déjà liké cette idée" });
+        }
 
-    const { data, error } = await supabase
-        .from('ideas')
-        .update({ likes: idea.likes + 1 })
-        .eq('id', id)
-        .select()
-        .single();
+        // Créer le like
+        const { error: likeError } = await supabase
+            .from('likes')
+            .insert([{ user_id: userId, idea_id: id }]);
 
-    if (error) return res.status(500).json({ error: error.message });
-    res.json(data);
+        if (likeError) return res.status(500).json({ error: likeError.message });
+
+        // Incrémenter le compteur de likes
+        const { data: idea, error: fetchError } = await supabase
+            .from('ideas')
+            .select('likes')
+            .eq('id', id)
+            .single();
+
+        if (fetchError) return res.status(500).json({ error: fetchError.message });
+
+        const { data, error } = await supabase
+            .from('ideas')
+            .update({ likes: idea.likes + 1 })
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) return res.status(500).json({ error: error.message });
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 app.delete('/api/ideas/:id', authenticateToken, async (req, res) => {
@@ -140,11 +165,7 @@ app.delete('/api/ideas/:id', authenticateToken, async (req, res) => {
 });
 
 // Messages Routes
-app.get('/api/messages', authenticateToken, async (req, res) => {
-    if (req.user.role !== 'ADMIN') {
-        return res.status(403).json({ error: "Accès refusé" });
-    }
-
+app.get('/api/messages', async (req, res) => {
     const { data, error } = await supabase
         .from('messages')
         .select('*')
