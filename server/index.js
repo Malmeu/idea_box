@@ -1,12 +1,11 @@
 require('dotenv').config();
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { supabase } = require('./supabase');
 const { validateContent, anonymizeMetadata } = require('./utils/contentModeration');
 
-const prisma = new PrismaClient();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
@@ -29,7 +28,6 @@ const authenticateToken = (req, res, next) => {
             console.log('❌ Token verification failed:', err.message);
             return res.status(403).json({ error: 'Token invalide ou expiré. Veuillez vous reconnecter.' });
         }
-        // Support both new (userId) and old (id) token payloads
         req.user = {
             ...user,
             userId: user.userId || user.id
@@ -41,251 +39,177 @@ const authenticateToken = (req, res, next) => {
 // Auth Routes
 app.post('/api/auth/login', async (req, res) => {
     const { username, password } = req.body;
-    const user = await prisma.user.findUnique({ where: { username } });
 
-    if (!user) return res.status(400).json({ error: "Utilisateur non trouvé" });
+    const { data: user, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('username', username)
+        .single();
+
+    if (error || !user) return res.status(400).json({ error: "Utilisateur non trouvé" });
 
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) return res.status(400).json({ error: "Mot de passe incorrect" });
 
-    const token = jwt.sign(
-        { userId: user.id, role: user.role },
-        process.env.JWT_SECRET,
-        { expiresIn: '24h' }
-    );
+    const token = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, { expiresIn: '24h' });
     res.json({ token, role: user.role });
 });
 
-// Ideas Routes
-app.get('/api/ideas', async (req, res) => {
-    // Get userId from token if available (optional auth for viewing, but needed for "hasLiked")
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    let userId = null;
+app.post('/api/auth/register', async (req, res) => {
+    const { username, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    if (token) {
-        try {
-            const decoded = jwt.verify(token, JWT_SECRET);
-            userId = decoded.userId;
-        } catch (e) { }
+    const { data, error } = await supabase
+        .from('users')
+        .insert([{ username, password: hashedPassword, role: 'USER' }])
+        .select()
+        .single();
+
+    if (error) {
+        return res.status(400).json({ error: "Nom d'utilisateur déjà pris" });
     }
 
-    const ideas = await prisma.idea.findMany({
-        orderBy: { createdAt: 'desc' },
-        include: {
-            comments: {
-                include: { user: { select: { username: true } } },
-                orderBy: { createdAt: 'desc' }
-            },
-            userLikes: true
-        }
-    });
-
-    const formattedIdeas = ideas.map(idea => ({
-        ...idea,
-        id: idea.id.toString(),
-        commentsCount: idea.comments.length,
-        comments: idea.comments.map(c => ({
-            ...c,
-            id: c.id.toString(),
-            username: c.user ? c.user.username : 'Anonyme'
-        })),
-        hasLiked: userId ? idea.userLikes.some(like => like.userId === userId) : false,
-        createdAt: idea.createdAt
-    }));
-    res.json(formattedIdeas);
+    const token = jwt.sign({ userId: data.id, role: data.role }, JWT_SECRET, { expiresIn: '24h' });
+    res.json({ token, role: data.role });
 });
 
-app.post('/api/ideas', async (req, res) => {
-    const { title, description, category, priority, tags, isAdvanced } = req.body;
-    if (!title || !description) return res.status(400).json({ error: "Titre et description requis" });
+// Ideas Routes
+app.get('/api/ideas', authenticateToken, async (req, res) => {
+    const { data, error } = await supabase
+        .from('ideas')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-    // Validation du titre
-    const titleValidation = validateContent(title, { maxLength: 100, minLength: 3 });
-    if (!titleValidation.isValid) {
-        return res.status(400).json({ error: titleValidation.message });
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data);
+});
+
+app.post('/api/ideas', authenticateToken, async (req, res) => {
+    const { title, description } = req.body;
+    const userId = req.user.userId;
+
+    if (!validateContent(title) || !validateContent(description)) {
+        return res.status(400).json({ error: "Contenu inapproprié détecté" });
     }
 
-    // Validation de la description
-    const descriptionValidation = validateContent(description, { maxLength: 500, minLength: 10 });
-    if (!descriptionValidation.isValid) {
-        return res.status(400).json({ error: descriptionValidation.message });
-    }
+    const { data, error } = await supabase
+        .from('ideas')
+        .insert([{ title, description, user_id: userId, likes: 0 }])
+        .select()
+        .single();
 
-    const idea = await prisma.idea.create({
-        data: {
-            title: titleValidation.cleanedContent,
-            description: descriptionValidation.cleanedContent,
-            category: category || null,
-            priority: priority || null,
-            tags: tags || null,
-            isAdvanced: isAdvanced || false
-        }
-    });
-    res.json({ ...idea, id: idea.id.toString(), comments: [], hasLiked: false });
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data);
 });
 
 app.post('/api/ideas/:id/like', authenticateToken, async (req, res) => {
     const { id } = req.params;
-    const userId = req.user.userId;
 
-    try {
-        const existingLike = await prisma.like.findUnique({
-            where: {
-                userId_ideaId: {
-                    userId: userId,
-                    ideaId: parseInt(id)
-                }
-            }
-        });
+    const { data: idea, error: fetchError } = await supabase
+        .from('ideas')
+        .select('likes')
+        .eq('id', id)
+        .single();
 
-        let updatedIdea;
+    if (fetchError) return res.status(500).json({ error: fetchError.message });
 
-        if (existingLike) {
-            // Unlike
-            await prisma.like.delete({ where: { id: existingLike.id } });
-            updatedIdea = await prisma.idea.update({
-                where: { id: parseInt(id) },
-                data: { likes: { decrement: 1 } }
-            });
-        } else {
-            // Like
-            await prisma.like.create({
-                data: {
-                    userId: userId,
-                    ideaId: parseInt(id)
-                }
-            });
-            updatedIdea = await prisma.idea.update({
-                where: { id: parseInt(id) },
-                data: { likes: { increment: 1 } }
-            });
-        }
+    const { data, error } = await supabase
+        .from('ideas')
+        .update({ likes: idea.likes + 1 })
+        .eq('id', id)
+        .select()
+        .single();
 
-        res.json({ ...updatedIdea, hasLiked: !existingLike });
-    } catch (e) {
-        console.error(e);
-        res.status(404).json({ error: "Erreur lors du like" });
-    }
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data);
 });
 
-app.post('/api/ideas/:id/comments', authenticateToken, async (req, res) => {
-    const { id } = req.params;
-    const { content } = req.body;
-    const userId = req.user.userId;
-
-    if (!content) return res.status(400).json({ error: "Contenu requis" });
-
-    try {
-        const comment = await prisma.comment.create({
-            data: {
-                content,
-                ideaId: parseInt(id),
-                userId
-            },
-            include: { user: { select: { username: true } } }
-        });
-
-        res.json({
-            ...comment,
-            id: comment.id.toString(),
-            username: comment.user.username
-        });
-    } catch (e) {
-        res.status(500).json({ error: "Erreur lors du commentaire" });
+app.delete('/api/ideas/:id', authenticateToken, async (req, res) => {
+    if (req.user.role !== 'ADMIN') {
+        return res.status(403).json({ error: "Accès refusé" });
     }
+
+    const { id } = req.params;
+    const { error } = await supabase
+        .from('ideas')
+        .delete()
+        .eq('id', id);
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ message: 'Idée supprimée' });
 });
 
 // Messages Routes
-app.get('/api/messages', async (req, res) => {
-    const messages = await prisma.message.findMany({
-        orderBy: { createdAt: 'desc' }
-    });
-    const formattedMessages = messages.map(msg => ({
-        ...msg,
-        id: msg.id.toString()
-    }));
-    res.json(formattedMessages);
+app.get('/api/messages', authenticateToken, async (req, res) => {
+    if (req.user.role !== 'ADMIN') {
+        return res.status(403).json({ error: "Accès refusé" });
+    }
+
+    const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data);
 });
 
 app.post('/api/messages', async (req, res) => {
     const { content, color, title, category, mood, isAdvanced } = req.body;
-    if (!content) return res.status(400).json({ error: "Contenu requis" });
 
-    // Anonymisation des métadonnées (ne stocke aucune info identifiable)
-    anonymizeMetadata(req);
-
-    // Validation du contenu principal
-    const contentValidation = validateContent(content, { maxLength: 500, minLength: 1 });
-    if (!contentValidation.isValid) {
-        return res.status(400).json({ error: contentValidation.message });
+    if (!validateContent(content)) {
+        return res.status(400).json({ error: "Contenu inapproprié détecté" });
     }
 
-    // Validation du titre si présent
-    let validatedTitle = title;
-    if (title) {
-        const titleValidation = validateContent(title, { maxLength: 100, minLength: 1 });
-        if (!titleValidation.isValid) {
-            return res.status(400).json({ error: `Titre: ${titleValidation.message}` });
-        }
-        validatedTitle = titleValidation.cleanedContent;
-    }
+    const metadata = anonymizeMetadata({ title, category, mood });
 
-    const message = await prisma.message.create({
-        data: {
-            content: contentValidation.cleanedContent,
-            color: color || 'bg-pastel-blue/40',
-            title: validatedTitle || null,
-            category: category || null,
-            mood: mood || null,
-            isAdvanced: isAdvanced || false
-        }
-    });
+    const { data, error } = await supabase
+        .from('messages')
+        .insert([{
+            content,
+            color,
+            title: metadata.title,
+            category: metadata.category,
+            mood: metadata.mood,
+            is_advanced: isAdvanced || false
+        }])
+        .select()
+        .single();
 
-    // Ne retourner que les données nécessaires, sans métadonnées
-    res.json({
-        id: message.id.toString(),
-        content: message.content,
-        color: message.color,
-        title: message.title,
-        category: message.category,
-        mood: message.mood,
-        isAdvanced: message.isAdvanced,
-        createdAt: message.createdAt
-    });
-});
-
-// Admin Routes (Protected)
-app.delete('/api/ideas/:id', authenticateToken, async (req, res) => {
-    const { id } = req.params;
-    try {
-        const ideaId = parseInt(id);
-
-        // Supprimer d'abord toutes les relations
-        await prisma.like.deleteMany({ where: { ideaId } }); // Delete likes first
-        await prisma.comment.deleteMany({ where: { ideaId } }); // Delete comments
-
-        // Puis supprimer l'idée
-        await prisma.idea.delete({ where: { id: ideaId } });
-
-        res.json({ success: true });
-    } catch (e) {
-        console.error('Erreur suppression idée:', e);
-        res.status(500).json({ error: "Erreur lors de la suppression", details: e.message });
-    }
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data);
 });
 
 app.delete('/api/messages/:id', authenticateToken, async (req, res) => {
-    const { id } = req.params;
-    try {
-        await prisma.message.delete({ where: { id: parseInt(id) } });
-        res.json({ success: true });
-    } catch (e) {
-        res.status(500).json({ error: "Erreur lors de la suppression" });
+    if (req.user.role !== 'ADMIN') {
+        return res.status(403).json({ error: "Accès refusé" });
     }
+
+    const { id } = req.params;
+    const { error } = await supabase
+        .from('messages')
+        .delete()
+        .eq('id', id);
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ message: 'Message supprimé' });
 });
 
 // Emergency Routes
+app.get('/api/emergencies', authenticateToken, async (req, res) => {
+    if (req.user.role !== 'ADMIN') {
+        return res.status(403).json({ error: "Accès refusé" });
+    }
+
+    const { data, error } = await supabase
+        .from('emergencies')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data);
+});
+
 app.post('/api/emergencies', async (req, res) => {
     const { description, name, department, urgencyLevel, contactAgreement } = req.body;
 
@@ -293,38 +217,21 @@ app.post('/api/emergencies', async (req, res) => {
         return res.status(400).json({ error: "Tous les champs sont requis" });
     }
 
-    try {
-        const emergency = await prisma.emergency.create({
-            data: {
-                description,
-                name,
-                department,
-                urgencyLevel,
-                contactAgreement: contactAgreement || false,
-                status: 'PENDING'
-            }
-        });
-        res.json(emergency);
-    } catch (e) {
-        console.error('Erreur création urgence:', e);
-        res.status(500).json({ error: "Erreur lors de l'envoi de l'urgence" });
-    }
-});
+    const { data, error } = await supabase
+        .from('emergencies')
+        .insert([{
+            description,
+            name,
+            department,
+            urgency_level: urgencyLevel,
+            contact_agreement: contactAgreement || false,
+            status: 'PENDING'
+        }])
+        .select()
+        .single();
 
-app.get('/api/emergencies', authenticateToken, async (req, res) => {
-    // Only admins should see this, but for now we just check auth
-    if (req.user.role !== 'ADMIN') {
-        return res.status(403).json({ error: "Accès refusé" });
-    }
-
-    try {
-        const emergencies = await prisma.emergency.findMany({
-            orderBy: { createdAt: 'desc' }
-        });
-        res.json(emergencies);
-    } catch (e) {
-        res.status(500).json({ error: "Erreur chargement urgences" });
-    }
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data);
 });
 
 app.patch('/api/emergencies/:id/status', authenticateToken, async (req, res) => {
@@ -339,31 +246,26 @@ app.patch('/api/emergencies/:id/status', authenticateToken, async (req, res) => 
         return res.status(400).json({ error: "Statut invalide" });
     }
 
-    try {
-        const emergency = await prisma.emergency.update({
-            where: { id: parseInt(id) },
-            data: { status }
-        });
-        res.json(emergency);
-    } catch (e) {
-        console.error('Erreur mise à jour statut:', e);
-        res.status(500).json({ error: "Erreur lors de la mise à jour" });
-    }
+    const { data, error } = await supabase
+        .from('emergencies')
+        .update({ status })
+        .eq('id', id)
+        .select()
+        .single();
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data);
 });
 
 // About U Routes
 app.get('/api/about-u', authenticateToken, async (req, res) => {
-    try {
-        const entries = await prisma.aboutU.findMany({
-            orderBy: { createdAt: 'desc' },
-            include: {
-                user: { select: { username: true } }
-            }
-        });
-        res.json(entries);
-    } catch (e) {
-        res.status(500).json({ error: "Erreur chargement About U" });
-    }
+    const { data, error } = await supabase
+        .from('about_u')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data);
 });
 
 app.post('/api/about-u', authenticateToken, async (req, res) => {
@@ -374,27 +276,22 @@ app.post('/api/about-u', authenticateToken, async (req, res) => {
         return res.status(400).json({ error: "Contenu, type et pseudo requis" });
     }
 
-    // Surprise logic: if content length > 50 chars, unlock surprise
     const isSurpriseUnlocked = content.length > 50;
 
-    try {
-        const entry = await prisma.aboutU.create({
-            data: {
-                content,
-                type,
-                nickname,
-                userId,
-                isSurpriseUnlocked
-            },
-            include: {
-                user: { select: { username: true } }
-            }
-        });
-        res.json(entry);
-    } catch (e) {
-        console.error('Erreur création About U:', e);
-        res.status(500).json({ error: "Erreur lors de la création" });
-    }
+    const { data, error } = await supabase
+        .from('about_u')
+        .insert([{
+            content,
+            type,
+            nickname,
+            user_id: userId,
+            is_surprise_unlocked: isSurpriseUnlocked
+        }])
+        .select()
+        .single();
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json(data);
 });
 
 app.listen(PORT, () => {
