@@ -3,22 +3,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Lock, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface AnonymousFormProps {
-    onSubmit: (data: { 
-        content: string; 
-        title?: string; 
-        category?: string; 
-        mood?: string; 
+    onSubmit: (data: {
+        content: string;
+        title?: string;
+        category?: string;
+        mood?: string;
         isAdvanced?: boolean;
     }) => void;
 }
 
 const CATEGORIES = [
-    { value: 'general', label: '💬 Général', color: 'bg-pastel-blue/40' },
-    { value: 'emotion', label: '💙 Émotions', color: 'bg-pastel-lavender/40' },
-    { value: 'stress', label: '😰 Stress/Anxiété', color: 'bg-pastel-peach/40' },
-    { value: 'joy', label: '😊 Joie/Gratitude', color: 'bg-pastel-mint/40' },
-    { value: 'reflection', label: '🤔 Réflexion', color: 'bg-pastel-cream/60' },
-    { value: 'support', label: '🤝 Besoin de soutien', color: 'bg-pastel-pink/40' },
+    { value: 'general', label: 'Général', emoji: '💬', color: 'bg-pastel-blue/40' },
+    { value: 'emotion', label: 'Émotions', emoji: '💙', color: 'bg-pastel-lavender/40' },
+    { value: 'stress', label: 'Stress/Anxiété', emoji: '😰', color: 'bg-pastel-peach/40' },
+    { value: 'joy', label: 'Joie/Gratitude', emoji: '😊', color: 'bg-pastel-mint/40' },
+    { value: 'reflection', label: 'Réflexion', emoji: '🤔', color: 'bg-pastel-cream/60' },
+    { value: 'support', label: 'Besoin de soutien', emoji: '🤝', color: 'bg-pastel-pink/40' },
 ];
 
 const MOODS = [
@@ -72,7 +72,7 @@ export const AnonymousForm: React.FC<AnonymousFormProps> = ({ onSubmit }) => {
                     <Lock className="w-4 h-4" />
                     <span className="text-xs font-medium uppercase tracking-wider">Anonymat garanti</span>
                 </div>
-                
+
                 <button
                     type="button"
                     onClick={() => setIsAdvanced(!isAdvanced)}
@@ -116,13 +116,13 @@ export const AnonymousForm: React.FC<AnonymousFormProps> = ({ onSubmit }) => {
                                         key={cat.value}
                                         type="button"
                                         onClick={() => setCategory(cat.value)}
-                                        className={`px-3 py-2 rounded-lg text-sm transition-all ${
-                                            category === cat.value
+                                        className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${category === cat.value
                                                 ? `${cat.color} ring-2 ring-pastel-lavender/50 font-medium`
                                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-600'
-                                        }`}
+                                            }`}
                                     >
-                                        {cat.label}
+                                        <span className="text-lg">{cat.emoji}</span>
+                                        <span>{cat.label}</span>
                                     </button>
                                 ))}
                             </div>
@@ -139,11 +139,10 @@ export const AnonymousForm: React.FC<AnonymousFormProps> = ({ onSubmit }) => {
                                         key={m.value}
                                         type="button"
                                         onClick={() => setMood(m.value)}
-                                        className={`flex flex-col items-center gap-1 px-2 py-3 rounded-lg text-xs transition-all ${
-                                            mood === m.value
-                                                ? 'bg-pastel-lavender/30 ring-2 ring-pastel-lavender/50 font-medium'
-                                                : 'bg-slate-50 hover:bg-slate-100 text-slate-600'
-                                        }`}
+                                        className={`flex flex-col items-center gap-1 px-2 py-3 rounded-lg text-xs transition-all ${mood === m.value
+                                            ? 'bg-pastel-lavender/30 ring-2 ring-pastel-lavender/50 font-medium'
+                                            : 'bg-slate-50 hover:bg-slate-100 text-slate-600'
+                                            }`}
                                         title={m.label}
                                     >
                                         <span className="text-2xl">{m.emoji}</span>
