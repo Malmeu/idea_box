@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trash2, LogOut, CheckCircle, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { formatDate, formatDateTime } from '../utils/formatDate';
 
 interface Idea {
     id: string;
     title: string;
     description: string;
     likes: number;
-    createdAt: string;
+    createdAt?: string;
+    created_at?: string;
 }
 
 interface Emergency {
@@ -16,17 +18,21 @@ interface Emergency {
     description: string;
     name: string;
     department: string;
-    urgencyLevel: 'MEDIUM' | 'HIGH' | 'CRITICAL';
-    contactAgreement: boolean;
+    urgencyLevel?: 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    urgency_level?: 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    contactAgreement?: boolean;
+    contact_agreement?: boolean;
     status: 'PENDING' | 'IN_PROGRESS' | 'RESOLVED';
-    createdAt: string;
+    createdAt?: string;
+    created_at?: string;
 }
 
 interface Message {
     id: string;
     content: string;
     color: string;
-    createdAt: string;
+    createdAt?: string;
+    created_at?: string;
 }
 
 export const DashboardPage: React.FC = () => {
@@ -182,21 +188,24 @@ export const DashboardPage: React.FC = () => {
                         Urgences ({emergencies.length})
                     </h2>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {emergencies.map(emergency => (
-                            <div key={emergency.id} className={`p-5 rounded-xl border-l-4 shadow-sm bg-white ${emergency.urgencyLevel === 'CRITICAL' ? 'border-l-red-500 border-red-100' :
-                                emergency.urgencyLevel === 'HIGH' ? 'border-l-orange-500 border-orange-100' :
+                        {emergencies.map(emergency => {
+                            const urgency = emergency.urgencyLevel || emergency.urgency_level;
+                            const contactOk = emergency.contactAgreement || emergency.contact_agreement;
+                            return (
+                            <div key={emergency.id} className={`p-5 rounded-xl border-l-4 shadow-sm bg-white ${urgency === 'CRITICAL' ? 'border-l-red-500 border-red-100' :
+                                urgency === 'HIGH' ? 'border-l-orange-500 border-orange-100' :
                                     'border-l-yellow-500 border-yellow-100'
                                 }`}>
                                 <div className="flex justify-between items-start mb-3">
-                                    <span className={`text-xs font-bold px-2 py-1 rounded-full ${emergency.urgencyLevel === 'CRITICAL' ? 'bg-red-100 text-red-600' :
-                                        emergency.urgencyLevel === 'HIGH' ? 'bg-orange-100 text-orange-600' :
+                                    <span className={`text-xs font-bold px-2 py-1 rounded-full ${urgency === 'CRITICAL' ? 'bg-red-100 text-red-600' :
+                                        urgency === 'HIGH' ? 'bg-orange-100 text-orange-600' :
                                             'bg-yellow-100 text-yellow-600'
                                         }`}>
-                                        {emergency.urgencyLevel}
+                                        {urgency}
                                     </span>
                                     <span className="text-xs text-slate-400 flex items-center gap-1">
                                         <Clock className="w-3 h-3" />
-                                        {new Date(emergency.createdAt).toLocaleDateString()}
+                                        {formatDate(emergency.createdAt || emergency.created_at)}
                                     </span>
                                 </div>
 
@@ -243,7 +252,7 @@ export const DashboardPage: React.FC = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    {emergency.contactAgreement && (
+                                    {contactOk && (
                                         <span className="text-xs bg-green-50 text-green-600 px-2 py-1 rounded-full flex items-center gap-1">
                                             <CheckCircle className="w-3 h-3" />
                                             Contact OK
@@ -251,7 +260,7 @@ export const DashboardPage: React.FC = () => {
                                     )}
                                 </div>
                             </div>
-                        ))}
+                        );})}
                         {emergencies.length === 0 && (
                             <div className="col-span-full text-center py-8 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
                                 Aucune urgence signalée
@@ -279,7 +288,7 @@ export const DashboardPage: React.FC = () => {
                                         <p className="text-sm text-slate-600 mt-1">{idea.description}</p>
                                         <div className="flex gap-4 mt-2 text-xs text-slate-400">
                                             <span>❤️ {idea.likes}</span>
-                                            <span>📅 {new Date(idea.createdAt).toLocaleDateString()}</span>
+                                            <span>📅 {formatDate(idea.createdAt || idea.created_at)}</span>
                                         </div>
                                     </div>
                                     <button
@@ -317,7 +326,7 @@ export const DashboardPage: React.FC = () => {
                                     </button>
                                 </div>
                                 <div className="mt-2 text-xs text-slate-500/60 text-right">
-                                    {new Date(message.createdAt).toLocaleString()}
+                                    {formatDateTime(message.createdAt || message.created_at)}
                                 </div>
                             </div>
                         ))}

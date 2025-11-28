@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
+import { formatTime } from '../../utils/formatDate';
 
 interface MessageCardProps {
     message: string;
@@ -81,7 +82,7 @@ export const MessageCard: React.FC<MessageCardProps> = ({
             {/* Pied de page avec heure */}
             <div className="mt-4 text-right">
                 <span className="text-xs text-slate-500/80">
-                    {new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {formatTime(date)}
                 </span>
             </div>
         </motion.div>

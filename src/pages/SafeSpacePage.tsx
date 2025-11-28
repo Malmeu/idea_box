@@ -8,12 +8,14 @@ import { useToast } from '../hooks/useToast';
 interface Message {
     id: string;
     content: string;
-    createdAt: string;
+    createdAt?: string;
+    created_at?: string;
     color: string;
     title?: string;
     category?: string;
     mood?: string;
     isAdvanced?: boolean;
+    is_advanced?: boolean;
 }
 
 const PASTEL_COLORS = [
@@ -178,7 +180,7 @@ export const SafeSpacePage: React.FC = () => {
                                 key={message.id}
                                 message={message.content}
                                 color={message.color}
-                                date={message.createdAt}
+                                date={message.createdAt || message.created_at || ''}
                                 title={message.title}
                                 category={message.category}
                                 mood={message.mood}

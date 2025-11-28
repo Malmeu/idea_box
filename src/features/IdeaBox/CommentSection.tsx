@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, Send, Trash2 } from 'lucide-react';
+import { formatDateTime } from '../../utils/formatDate';
 
 interface Comment {
     id: string;
     content: string;
-    createdAt: string;
+    createdAt?: string;
+    created_at?: string;
     user: { username: string };
 }
 
@@ -128,7 +130,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({ ideaId, initialC
                                                 {comment.content}
                                             </p>
                                             <p className="text-xs text-slate-400 mt-1">
-                                                {new Date(comment.createdAt).toLocaleString()}
+                                                {formatDateTime(comment.createdAt || comment.created_at)}
                                             </p>
                                         </div>
                                         <button

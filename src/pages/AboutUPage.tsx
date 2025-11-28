@@ -3,14 +3,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Sparkles, Send, Trophy } from 'lucide-react';
 import { useToast } from '../hooks/useToast';
 import { Toast } from '../components/Toast';
+import { formatDate } from '../utils/formatDate';
 
 interface AboutUEntry {
     id: string;
     content: string;
     type: 'DREAM' | 'GOAL' | 'PASSION' | 'STORY';
     nickname: string;
-    createdAt: string;
-    isSurpriseUnlocked: boolean;
+    createdAt?: string;
+    created_at?: string;
+    isSurpriseUnlocked?: boolean;
+    is_surprise_unlocked?: boolean;
 }
 
 const TYPE_CONFIG = {
@@ -212,7 +215,7 @@ export const AboutUPage: React.FC = () => {
                                     transition={{ delay: idx * 0.05 }}
                                     className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all relative overflow-hidden"
                                 >
-                                    {entry.isSurpriseUnlocked && (
+                                    {(entry.isSurpriseUnlocked || entry.is_surprise_unlocked) && (
                                         <div className="absolute top-0 right-0 bg-gradient-to-bl from-amber-100 to-transparent w-32 h-32 flex items-start justify-end p-3">
                                             <Trophy className="w-5 h-5 text-amber-500" />
                                         </div>
@@ -224,7 +227,7 @@ export const AboutUPage: React.FC = () => {
                                             {TYPE_CONFIG[entry.type].label}
                                         </span>
                                         <span className="text-xs text-slate-400">
-                                            {new Date(entry.createdAt).toLocaleDateString()}
+                                            {formatDate(entry.createdAt || entry.created_at)}
                                         </span>
                                     </div>
 
@@ -239,7 +242,7 @@ export const AboutUPage: React.FC = () => {
                                             </div>
                                             {entry.nickname}
                                         </span>
-                                        {entry.isSurpriseUnlocked && (
+                                        {(entry.isSurpriseUnlocked || entry.is_surprise_unlocked) && (
                                             <span className="text-xs bg-amber-50 text-amber-600 px-3 py-1 rounded-full flex items-center gap-1 font-medium">
                                                 <Sparkles className="w-3 h-3" />
                                                 Inspirant
