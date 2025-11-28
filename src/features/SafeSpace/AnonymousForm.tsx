@@ -13,23 +13,23 @@ interface AnonymousFormProps {
 }
 
 const CATEGORIES = [
-    { value: 'general', label: 'Général', emoji: '💬', color: 'bg-pastel-blue/40' },
-    { value: 'emotion', label: 'Émotions', emoji: '💙', color: 'bg-pastel-lavender/40' },
-    { value: 'stress', label: 'Stress/Anxiété', emoji: '😰', color: 'bg-pastel-peach/40' },
-    { value: 'joy', label: 'Joie/Gratitude', emoji: '😊', color: 'bg-pastel-mint/40' },
-    { value: 'reflection', label: 'Réflexion', emoji: '🤔', color: 'bg-pastel-cream/60' },
-    { value: 'support', label: 'Besoin de soutien', emoji: '🤝', color: 'bg-pastel-pink/40' },
+    { value: 'general', label: 'General', emoji: String.fromCodePoint(0x1F4AC), color: 'bg-pastel-blue/40' },
+    { value: 'emotion', label: 'Emotions', emoji: String.fromCodePoint(0x1F499), color: 'bg-pastel-lavender/40' },
+    { value: 'stress', label: 'Stress/Anxiete', emoji: String.fromCodePoint(0x1F630), color: 'bg-pastel-peach/40' },
+    { value: 'joy', label: 'Joie/Gratitude', emoji: String.fromCodePoint(0x1F60A), color: 'bg-pastel-mint/40' },
+    { value: 'reflection', label: 'Reflexion', emoji: String.fromCodePoint(0x1F914), color: 'bg-pastel-cream/60' },
+    { value: 'support', label: 'Besoin de soutien', emoji: String.fromCodePoint(0x1F91D), color: 'bg-pastel-pink/40' },
 ];
 
 const MOODS = [
-    { value: 'happy', emoji: '😊', label: 'Heureux' },
-    { value: 'sad', emoji: '😢', label: 'Triste' },
-    { value: 'anxious', emoji: '😰', label: 'Anxieux' },
-    { value: 'calm', emoji: '😌', label: 'Calme' },
-    { value: 'angry', emoji: '😠', label: 'En colère' },
-    { value: 'confused', emoji: '😕', label: 'Confus' },
-    { value: 'grateful', emoji: '🙏', label: 'Reconnaissant' },
-    { value: 'hopeful', emoji: '🌟', label: 'Plein d\'espoir' },
+    { value: 'happy', emoji: String.fromCodePoint(0x1F60A), label: 'Heureux' },
+    { value: 'sad', emoji: String.fromCodePoint(0x1F622), label: 'Triste' },
+    { value: 'anxious', emoji: String.fromCodePoint(0x1F630), label: 'Anxieux' },
+    { value: 'calm', emoji: String.fromCodePoint(0x1F60C), label: 'Calme' },
+    { value: 'angry', emoji: String.fromCodePoint(0x1F620), label: 'En colere' },
+    { value: 'confused', emoji: String.fromCodePoint(0x1F615), label: 'Confus' },
+    { value: 'grateful', emoji: String.fromCodePoint(0x1F64F), label: 'Reconnaissant' },
+    { value: 'hopeful', emoji: String.fromCodePoint(0x1F31F), label: "Plein d'espoir" },
 ];
 
 export const AnonymousForm: React.FC<AnonymousFormProps> = ({ onSubmit }) => {
@@ -44,7 +44,6 @@ export const AnonymousForm: React.FC<AnonymousFormProps> = ({ onSubmit }) => {
         e.preventDefault();
         if (message.trim()) {
             setIsSending(true);
-            // Simulate a small delay for the animation
             await new Promise(resolve => setTimeout(resolve, 500));
             onSubmit({
                 content: message,
@@ -78,7 +77,7 @@ export const AnonymousForm: React.FC<AnonymousFormProps> = ({ onSubmit }) => {
                     onClick={() => setIsAdvanced(!isAdvanced)}
                     className="flex items-center gap-1 text-xs text-slate-600 hover:text-pastel-lavender transition-colors"
                 >
-                    <span>{isAdvanced ? 'Mode simple' : 'Mode avancé'}</span>
+                    <span>{isAdvanced ? 'Mode simple' : 'Mode avance'}</span>
                     {isAdvanced ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
             </div>
@@ -100,15 +99,15 @@ export const AnonymousForm: React.FC<AnonymousFormProps> = ({ onSubmit }) => {
                                 type="text"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                placeholder="Donnez un titre à votre message..."
+                                placeholder="Donnez un titre a votre message..."
                                 className="w-full bg-slate-50/50 rounded-xl px-4 py-2 text-slate-700 placeholder-slate-400 border-none focus:ring-2 focus:ring-pastel-lavender/50 transition-all"
                             />
                         </div>
 
-                        {/* Catégorie */}
+                        {/* Categorie */}
                         <div>
                             <label className="block text-xs font-medium text-slate-600 mb-2">
-                                Catégorie
+                                Categorie
                             </label>
                             <div className="grid grid-cols-2 gap-2">
                                 {CATEGORIES.map((cat) => (
