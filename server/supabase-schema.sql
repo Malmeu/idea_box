@@ -19,6 +19,10 @@ CREATE TABLE IF NOT EXISTS ideas (
   description TEXT NOT NULL,
   user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
   likes INTEGER DEFAULT 0,
+  category TEXT,
+  priority TEXT,
+  tags TEXT,
+  is_advanced BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

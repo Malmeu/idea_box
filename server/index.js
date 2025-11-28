@@ -93,7 +93,7 @@ app.get('/api/ideas', authenticateToken, async (req, res) => {
 });
 
 app.post('/api/ideas', authenticateToken, async (req, res) => {
-    const { title, description } = req.body;
+    const { title, description, category, priority, tags, isAdvanced } = req.body;
     const userId = req.user.userId;
 
     if (!validateContent(title) || !validateContent(description)) {
@@ -102,7 +102,16 @@ app.post('/api/ideas', authenticateToken, async (req, res) => {
 
     const { data, error } = await supabase
         .from('ideas')
-        .insert([{ title, description, user_id: userId, likes: 0 }])
+        .insert([{ 
+            title, 
+            description, 
+            user_id: userId, 
+            likes: 0,
+            category: category || null,
+            priority: priority || null,
+            tags: tags || null,
+            is_advanced: isAdvanced || false
+        }])
         .select()
         .single();
 
